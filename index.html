@@ -5,32 +5,13 @@
     <title>DocDown</title>
     <link rel="stylesheet" href="./vendor/css/photon.css" media="screen" charset="utf-8">
     <link rel="stylesheet" href="./index.css" media="screen" charset="utf-8">
-    <script charset="utf-8">require('./index')</script>
-    <style>
-      #drag-file {
-        display: flex;
-        flex-direction: column;
-        align-items: center !important;
-        justify-content: center !important;
-        text-align: center;
-        background-color: #fafafa;
-        color: #aaa;
-        width:100%;
-        height:100%;
-        border: 1px dashed #aaa;
-        font-size: 2em;
-        padding: 10px;
-      }
-      #help_section {
-        display: none;
-      }
-    </style>
+    <script>window.$ = window.jQuery = require('jquery');</script>
   </head>
   <body>
-    <div class="header-arrow"></div>
+    <!-- <div class="header-arrow"></div> -->
     <div class="window">
       <header class="toolbar toolbar-header">
-        <div class="footer-link">
+        <div class="title">
           DocDown
         </div>
 
@@ -52,15 +33,18 @@
       <div class="window-content" style="padding:10px;">
 
           <div id="drag-file">
-            <span class="icon icon-docs" style="font-size: 2em;"></span>
+            <p>
+              ⚡️📖⚡️
+            </p>
+            <!-- <span class="icon icon-docs" style="font-size: 2em;"></span> -->
             <p>Drag some Markdown files here!</p>
           </div>
           <div id="help_section">
             <p>
-              DocDown is a menu bar utility to convert files written in the lightweight Markdown syntax into academia-ready Word documents. Drop a file with the .txt, .md, or .markdown extension into DocDown, or export a file into it from an application like Ulysses, and it will export a Word file into the same directory.
+              DocDown is a menu bar utility to convert files written in the lightweight Markdown syntax into academia-ready Word documents. Drop a file with the .txt, .md, or .markdown extension into DocDown, or export a file into it from an application like Ulysses, and it will export a Word file into your chosen directory.
             </p>
             <p>
-              DocDown requires the file conversion utility Pandoc to function. You also need to select a Zotero bibliography file, a CSL file, and a reference .docx file in the preferences window. Confused? Visit the <a href="http://raphaelkabo.com/docdown">DocDown website</a> to get set up.
+              DocDown requires the file conversion utility Pandoc to be installed on your system to function. You also need to select a Zotero bibliography file, a CSL file, and a reference .docx file in the preferences window. Confused? Visit the <a id="external_link" style="color:inherit" href="https://github.com/lowercasename/docdown">DocDown website</a> to get set up.
             </p>
             <p>
               Happy converting!
@@ -68,60 +52,58 @@
           </div>
 
       </div>
-
-      <!-- <footer class="toolbar toolbar-footer">
-
-
-
-      </footer> -->
     </div>
   </body>
-  <script>window.$ = window.jQuery = require('jquery');</script>
   <script>
-    const { ipcRenderer } = require('electron');
-    $("#quit_button").click(function(){
-      ipcRenderer.send('quit-app');
+  const { ipcRenderer, shell } = require('electron');
+
+  $("#quit_button").click(function(){
+    ipcRenderer.send('quit-app');
+  })
+  $("#settings_button").click(function(){
+    ipcRenderer.send('show-preferences');
+  });
+  $("#help_button").click(function(){
+    $("#drag-file").toggle();
+    $("#help_section").toggle();
+    $(this).toggleClass("active");
+  });
+  $("#external_link").click(function(e){
+    e.preventDefault();
+    shell.openExternal('https://github.com/lowercasename/docdown')
+  })
+  ipcRenderer.on('notify', (event, payload) => {
+    let notification = new Notification(payload.title, {
+      body: payload.body
     })
-    $("#settings_button").click(function(){
-      ipcRenderer.send('show-preferences');
-    });
-    $("#help_button").click(function(){
-      $("#drag-file").toggle();
-      $("#help_section").toggle();
-      $(this).toggleClass("active");
-    });
-    ipcRenderer.on('notify', (event, payload) => {
-      let notification = new Notification(payload.title, {
-        body: payload.body
-      })
-    })
-    $(document).ready(function() {
-        var holder = document.getElementById('drag-file')
+  })
+  $(document).ready(function() {
+      var holder = document.getElementById('drag-file')
 
-        holder.ondragover = () => {
-          $("#drag-file").css("background-color","#ededed")
+      holder.ondragover = () => {
+        $("#drag-file").css("background-color","#ededed")
+        return false;
+      };
+
+      holder.ondragleave = () => {
+        $("#drag-file").css("background-color","#fafafa")
           return false;
-        };
+      };
 
-        holder.ondragleave = () => {
-          $("#drag-file").css("background-color","#fafafa")
-            return false;
-        };
+      holder.ondragend = () => {
+        $("#drag-file").css("background-color","#fafafa")
+        return false;
+      };
 
-        holder.ondragend = () => {
-          $("#drag-file").css("background-color","#fafafa")
+      holder.ondrop = (e) => {
+          e.preventDefault();
+          console.log("Done did dropped!")
+          for (let f of e.dataTransfer.files) {
+            ipcRenderer.send('convert-file', {"path": f.path, "type": f.type});
+          }
+
           return false;
-        };
-
-        holder.ondrop = (e) => {
-            e.preventDefault();
-            console.log("Done did dropped!")
-            for (let f of e.dataTransfer.files) {
-              ipcRenderer.send('convert-file', {"path": f.path, "type": f.type});
-            }
-
-            return false;
-        };
-    });
+      };
+  });
   </script>
 </html>

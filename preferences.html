@@ -10,6 +10,22 @@
     .window-content {
       background-color: #f5f5f4;
     }
+    button:disabled,
+    button[disabled]{
+      color: #aaa;
+    }
+    input:disabled {
+      background-color: #eee;
+      color: #aaa;
+    }
+    select {
+      width: 426px !important;
+      height: 30px;
+    }
+    select:disabled {
+      background-color: #eee;
+      color: #aaa;
+    }
     </style>
 
     <!-- Electron Javascript -->
@@ -26,23 +42,65 @@
             <div class="form-group">
               <label>Folder to save exported files</label>
               <input type="input" id="output_directory_input" class="form-control" style="width: 82%;" placeholder="Select a folder">
-              <button id="output_directory_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+              <button type="button" id="output_directory_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
             </div>
+            <hr />
             <div class="form-group">
               <label>Location of Zotero bibliography file</label>
               <input type="input" id="bibliography_file_input" class="form-control" style="width: 82%;" placeholder="Select a .bib file">
-              <button id="bibliography_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+              <button type="button" id="bibliography_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
             </div>
-            <div class="form-group">
-              <label>Location of CSL file</label>
-              <input type="input" id="csl_file_input" class="form-control" style="width: 82%;" placeholder="Select a .csl file">
-              <button id="csl_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+            <hr />
+            <div class="radio">
+              <label>
+                <input type="radio" name="csl_radios" id="csl_radio_internal">
+                Use an included CSL file
+              </label>
+              <select class="form-control" id="internal_csl_selector" style="margin-left:20px;">
+                <option value="none">Select a citation style</option>
+                <option value="apa">American Psychological Association 6th edition</option>
+                <option value="chicago-ad">Chicago Manual of Style 17th edition (Author-Date)</option>
+                <option value="chicago-note">Chicago Manual of Style 17th edition (Note)</option>
+                <option value="mhra-ad">Modern Humanities Research Association 3rd edition (Author-Date)</option>
+                <option value="mhra-note">Modern Humanities Research Association 3rd edition (Note)</option>
+                <option value="mla">Modern Language Association 8th edition</option>
+              </select>
             </div>
-            <div class="form-group">
-              <label>Location of Word style reference file</label>
-              <input type="input" id="docx_file_input" class="form-control" style="width: 82%;" placeholder="Select a .docx file">
-              <button id="reference_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+            <div class="radio">
+              <label>
+                <input type="radio" name="csl_radios" id="csl_radio_external">
+                Choose a custom CSL file
+              </label>
+              <div class="form-group" style="margin-left:20px;">
+                <input type="input" id="csl_file_input" class="form-control" style="width: 82%;" placeholder="Select a .csl file">
+                <button type="button" id="csl_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+              </div>
             </div>
+            <hr />
+            <div class="radio">
+              <label>
+                <input type="radio" name="docx_radios" id="docx_radio_internal">
+                Use an included Word style reference file
+              </label>
+              <select class="form-control" id="internal_docx_selector" style="margin-left:20px;">
+                <option value="none">Select a style</option>
+                <option value="pandoc">Pandoc default (Calibri/Cambria)</option>
+                <option value="paperback">Paperback (Futura/Garamond)</option>
+                <option value="computer">Computer (CMU Serif)</option>
+                <option value="report">Report (Times New Roman)</option>
+              </select>
+            </div>
+            <div class="radio">
+              <label>
+                <input type="radio" name="docx_radios" id="docx_radio_external">
+                Choose a custom Word style reference file
+              </label>
+              <div class="form-group" style="margin-left:20px;">
+                <input type="input" id="docx_file_input" class="form-control" style="width: 82%;" placeholder="Select a .docx file">
+                <button type="button" id="docx_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+              </div>
+            </div>
+            <hr />
             <div class="checkbox">
               <label>
                 <input type="checkbox" id="open_on_startup"> Open DocDown on startup
@@ -63,9 +121,35 @@
     $(document).ready(function() {
       $("#output_directory_input").val(preferencesObject.outputDirectory);
       $("#bibliography_file_input").val(preferencesObject.bibliographyFile);
-      $("#csl_file_input").val(preferencesObject.cslFile);
-      $("#docx_file_input").val(preferencesObject.docxFile);
+      $("#csl_file_input").val(preferencesObject.cslSource == "internal" ? "" : preferencesObject.cslFile);
+      $("#docx_file_input").val(preferencesObject.docxSource == "internal" ? "" : preferencesObject.docxFile);
       $("#open_on_startup").prop('checked', preferencesObject.autoLaunch);
+      $("#csl_radio_internal").prop('checked', preferencesObject.cslSource == "internal" ? true : false);
+      $("#csl_radio_external").prop('checked', preferencesObject.cslSource == "external" ? true : false);
+      $("#docx_radio_internal").prop('checked', preferencesObject.docxSource == "internal" ? true : false);
+      $("#docx_radio_external").prop('checked', preferencesObject.docxSource == "external" ? true : false);
+      $("#internal_csl_selector").val(preferencesObject.cslSource == "internal" ? preferencesObject.cslInternalVal : "none")
+      $("#internal_docx_selector").val(preferencesObject.docxSource == "internal" ? preferencesObject.docxInternalVal : "none")
+      console.log("preferencesObject.cslSource: " + preferencesObject.cslSource);
+      console.log("preferencesObject.docxSource: " + preferencesObject.docxSource);
+      if ($("#csl_radio_internal").is(":checked")){
+        console.log("CSL internal checked!");
+        $("#csl_file_input").prop("disabled",true);
+        $("#csl_file_button").prop("disabled",true);
+      }
+      else {
+        console.log("CSL external checked!");
+        $("#internal_csl_selector").prop("disabled",true);
+      }
+      if ($("#docx_radio_internal").is(":checked")){
+        console.log("DOCX internal checked!");
+        $("#docx_file_input").prop("disabled",true);
+        $("#docx_file_button").prop("disabled",true);
+      }
+      else {
+        console.log("DOCX external checked!");
+        $("#internal_docx_selector").prop("disabled",true);
+      }
     })
 
     ipcRenderer.on('preference_value', (event, payload) => {
@@ -80,17 +164,97 @@
     $("#csl_file_button").click(function(){
       ipcRenderer.send('select_file', 'cslFile')
     })
-    $("#reference_file_button").click(function(){
+    $("#docx_file_button").click(function(){
       ipcRenderer.send('select_file', 'docxFile')
     })
     $('#open_on_startup').change(function() {
       if(this.checked) {
-        console.log("The checkbox is now checked")
         ipcRenderer.send('set_auto_launch', true)
         return;
       }
-      console.log("The checkbox is now unchecked")
       ipcRenderer.send('set_auto_launch', false)
+    });
+    $( 'input[name="csl_radios"]:radio' ).change(function() {
+      console.log("CSL radio clicked!");
+      if ($("#csl_radio_internal").is(":checked")){
+        console.log("CSL internal checked!");
+        $("#internal_csl_selector").prop("disabled",false);
+        $("#csl_file_input").prop("disabled",true).val("");
+        $("#csl_file_button").prop("disabled",true);
+        ipcRenderer.send('change_file_source', {file: 'csl', value: 'internal'})
+        ipcRenderer.send('clear_external_file', 'cslFile')
+      }
+      else {
+        console.log("CSL external checked!");
+        $("#internal_csl_selector").prop("disabled",true).val("none");
+        $("#csl_file_input").prop("disabled",false);
+        $("#csl_file_button").prop("disabled",false);
+        ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '', internalVal: 'none'})
+        ipcRenderer.send('change_file_source', {file: 'csl', value: 'external'})
+      }
+    })
+    $( 'input[name="docx_radios"]:radio' ).change(function() {
+      console.log("DOCX radio clicked!");
+      if ($("#docx_radio_internal").is(":checked")){
+        console.log("DOCX internal checked!");
+        $("#internal_docx_selector").prop("disabled",false);
+        $("#docx_file_input").prop("disabled",true).val("");
+        $("#docx_file_button").prop("disabled",true);
+        ipcRenderer.send('change_file_source', {file: 'docx', value: 'internal'})
+        ipcRenderer.send('clear_external_file', 'docxFile')
+      }
+      else {
+        console.log("DOCX external checked!");
+        $("#internal_docx_selector").prop("disabled",true).val("none");
+        $("#docx_file_input").prop("disabled",false);
+        $("#docx_file_button").prop("disabled",false);
+        ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '', internalVal: 'none'})
+        ipcRenderer.send('change_file_source', {file: 'docx', value: 'external'})
+      }
+    })
+    $("#internal_csl_selector").change(function() {
+      switch ($(this).val()){
+        case "apa":
+          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/apa.csl', internalVal: $(this).val()})
+          break;
+        case "chicago-ad":
+          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/chicago-author-date.csl', internalVal: $(this).val()})
+          break;
+        case "chicago-note":
+          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/chicago-note-bibliography.csl', internalVal: $(this).val()})
+          break;
+        case "mhra-ad":
+          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/modern-humanities-research-association-author-date.csl', internalVal: $(this).val()})
+          break;
+        case "mhra-note":
+          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/modern-humanities-research-association.csl', internalVal: $(this).val()})
+          break;
+        case "mla":
+          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/modern-language-association.csl', internalVal: $(this).val()})
+          break;
+        case "none":
+          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '', internalVal: $(this).val()})
+          break;
+      }
+    });
+    $("#internal_docx_selector").change(function() {
+      switch ($(this).val()){
+        case "pandoc":
+          ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '/docx/pandoc-default-reference.docx', internalVal: $(this).val()})
+          break;
+        case "paperback":
+          ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '/docx/paperback-reference.docx', internalVal: $(this).val()})
+          break;
+        case "computer":
+          ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '/docx/computer-reference.docx', internalVal: $(this).val()})
+          break;
+        case "report":
+          ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '/docx/report-reference.docx', internalVal: $(this).val()})
+          break;
+        case "none":
+          ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '', internalVal: $(this).val()})
+          break;
+      }
     });
   </script>
 </html>

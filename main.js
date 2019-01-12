@@ -11,13 +11,8 @@ const notify = require('electron-main-notification')
 
 var autoLauncher = new AutoLaunch({
     name: 'DocDown',
-    isHidden: true,
-    mac: {
-      useLaunchAgent: true
-    }
+    isHidden: true
 });
-
-// console.log( process.env.PATH );
 
 async function convert(filepath) {
   commandExists('pandoc', function(err, commandExists) {
@@ -27,16 +22,15 @@ async function convert(filepath) {
         outputDirectory: settings.get('user.outputDirectory', settings.get('defaults.outputDirectory')),
         bibliographyFile: settings.get('user.bibliographyFile', settings.get('defaults.bibliographyFile')),
         cslFile: settings.get('user.cslFile', settings.get('defaults.cslFile')),
-        docxFile: settings.get('user.docxFile', settings.get('defaults.docxFile')),
-        autoLaunch: settings.get('user.autoLaunch', settings.get('defaults.autoLaunch'))
+        docxFile: settings.get('user.docxFile', settings.get('defaults.docxFile'))
       }
+      console.log(settingsObject);
       if (settingsObject.outputDirectory === "" || settingsObject.bibliographyFile === "" || settingsObject.cslFile === "" || settingsObject.docxFile === "") {
         dialog.showMessageBox({type: "warning", message: "Please set file paths for all the files DocDown requires!"})
         return false;
       }
       const fileType = mime.lookup(filepath)
       if (fileType === "text/markdown" || fileType === "text/plain"){
-        console.log("Looks like the right kinda file!")
         var pandoc = require('node-pandoc')
         const fileName = path.basename(filepath, path.extname(filepath))
         // const parentDirectory = path.dirname(filepath)
@@ -45,8 +39,6 @@ async function convert(filepath) {
 
         // This is where the magic happens, for a given definiton of 'magic'
         const hellScapeMcHorrorFace = ['-s','--filter','pandoc-citeproc','--bibliography',settingsObject.bibliographyFile,'--csl',settingsObject.cslFile,'--reference-doc',settingsObject.docxFile,'-f','markdown+smart+escaped_line_breaks','-t','docx','-o',outputFile];
-
-        console.log("Beginning conversion!")
 
         callback = function (err, result) {
           if (err){
@@ -77,38 +69,56 @@ var mb = menubar({
   icon: path.join(assetsDirectory, 'docdown_icon.png'),
   width: 300,
   height: 400,
-  transparent: true,
-  resize: false,
+  transparent: false,
   hasShadow: true,
   resizable: false
 })
 
 mb.on('ready', function ready () {
-  process.env.PATH += ':/usr/local/bin';
-  console.log(process.env.PATH);
-  // mb.on('after-create-window', function(event){
-  //   mb.window.openDevTools({mode: 'detach'})
-  // })
+  // Add /usr/local/bin and /usr/local/sbin to $PATH because they aren't in $PATH if the application is started from Finder
+  process.env.PATH += ':/usr/local/bin:/usr/local/sbin';
+
+  // If this is the first time this app is started, settings will be empty and need to be filled with defaults
+  settingsSet = settings.get("defaults.outputDirectory");
+  if (!settingsSet) {
+    settings.setAll({
+      defaults: {
+        outputDirectory: app.getPath('home'),
+        bibliographyFile: '',
+        cslFile: path.join(assetsDirectory, '/csl/chicago-note-bibliography.csl'),
+        cslSource: 'internal',
+        cslInternalVal: 'chicago-note',
+        docxFile: path.join(assetsDirectory, '/docx/pandoc-default-reference.docx'),
+        docxSource: 'internal',
+        docxInternalVal: 'pandoc',
+        autoLaunch: false
+      }
+    });
+  }
+
+  mb.on('after-create-window', function(event){
+    // mb.window.openDevTools({mode: 'detach'})
+
+    // Move window 4 pixels down from menubar
+    var isWin = process.platform === "win32";
+    yPosition = mb.positioner.calculate('trayCenter').y;
+    if (isWin){
+      yPosition = yPosition-4;
+    }
+    else {
+      yPosition = yPosition+4;
+    }
+    mb.setOption("y",yPosition);
+  })
   mb.tray.on('drop-files', function (event, fileArray) {
     event.preventDefault();
     fileArray.forEach(function(file) {
-      console.log(file)
       convert(file);
     });
   });
 })
 
-// settings.setAll({
-//   defaults: {
-//     outputDirectory: app.getPath('home'),
-//     bibliographyFile: '',
-//     cslFile: '',
-//     docxFile: '',
-//     autoLaunch: ''
-//   }
-// });
-
-console.log(settings.getAll());
+// console.log(settings.getAll());
 
 // Quit the app when the window is closed
 app.on('window-all-closed', () => {
@@ -118,10 +128,7 @@ app.on('window-all-closed', () => {
 app.on('will-finish-launching', ()=>{
   app.on('open-file', function(event, file) {
   	event.preventDefault();
-    // fileArray.forEach(function(file) {
-      console.log(file)
-      convert(file)
-    // });
+    convert(file)
   });
 })
 
@@ -154,14 +161,39 @@ ipcMain.on('select_file', (event, target) => {
       if (file !== undefined) {
         setPreference(target, file)
         event.sender.send('preference_value', {'element': element, 'value': file})
-        // ipcRenderer.send('set-preference', {preference: 'bibliographyFile', value: file});
-        // $("#bibliography_file_input").val(file);
       }
   });
 })
 
+ipcMain.on('change_file_source', (event, payload) => {
+  switch (payload.file) {
+    case "csl":
+      setPreference("cslSource", payload.value);
+      break;
+    case "docx":
+      setPreference("docxSource", payload.value);
+      break;
+    default:
+      break;
+  }
+});
+
+ipcMain.on('choose_internal_file', (event, payload) => {
+  if (payload.value == "") {
+    setPreference(payload.preference + 'File', "");
+    setPreference(payload.preference + 'InternalVal', payload.internalVal)
+  }
+  else {
+    setPreference(payload.preference + 'File', path.join(assetsDirectory, payload.value));
+    setPreference(payload.preference + 'InternalVal', payload.internalVal)
+  }
+});
+
+ipcMain.on('clear_external_file', (event, target) => {
+  setPreference(target, "");
+});
+
 ipcMain.on('set_auto_launch', (event, value) => {
-  console.log("I'm being sent the value " + value)
   if (value === true){
     autoLauncher.isEnabled()
     .then(function(isEnabled){
@@ -190,14 +222,18 @@ ipcMain.on('set_auto_launch', (event, value) => {
 })
 
 ipcMain.on('show-preferences', () => {
-  const preferencesWindow = eWindow.createWindow({ width: 486, height: 400, preload: true, resizable: false })
+  const preferencesWindow = eWindow.createWindow({ width: 486, height: 600, preload: true, resizable: false })
   const preferencesPath = path.resolve(__dirname, 'preferences.html')
   const settingsObject = {
     outputDirectory: settings.get('user.outputDirectory', settings.get('defaults.outputDirectory')),
     bibliographyFile: settings.get('user.bibliographyFile', settings.get('defaults.bibliographyFile')),
     cslFile: settings.get('user.cslFile', settings.get('defaults.cslFile')),
     docxFile: settings.get('user.docxFile', settings.get('defaults.docxFile')),
-    autoLaunch: settings.get('user.autoLaunch', settings.get('defaults.autoLaunch'))
+    autoLaunch: settings.get('user.autoLaunch', settings.get('defaults.autoLaunch')),
+    cslSource: settings.get('user.cslSource', settings.get('defaults.cslSource')),
+    docxSource: settings.get('user.docxSource', settings.get('defaults.docxSource')),
+    cslInternalVal: settings.get('user.cslInternalVal', settings.get('defaults.cslInternalVal')),
+    docxInternalVal: settings.get('user.docxInternalVal', settings.get('defaults.docxInternalVal'))
   }
   console.log(settingsObject);
   preferencesWindow.showUrl(preferencesPath, settingsObject)
@@ -208,11 +244,6 @@ ipcMain.on('quit-app', () => {
   app.quit()
 })
 
-
-ipcMain.on('show-window', () => {
-  showWindow()
-})
-
 ipcMain.on('convert-file', (event, file) => {
   convert(file.path)
 });
@@ -220,5 +251,5 @@ ipcMain.on('convert-file', (event, file) => {
 function setPreference (preference, value){
   preference = 'user.' + preference
   settings.set(preference, value)
-  console.log("Preference is now: ",settings.get(preference))
+  console.log("Preference for " + preference + " is now: ",settings.get(preference))
 }

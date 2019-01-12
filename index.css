@@ -7,7 +7,7 @@
 }
 
 /* The arrow at the top of the window */
-.header-arrow {
+/* .header-arrow {
   position: absolute;
   top: 5px;
   left: 50%;
@@ -16,64 +16,55 @@
   width: 20px;
   transform: rotate(45deg);
   background-color: #e8e6e8;
-}
+} */
 
-.window {
+/* .window {
   position: absolute;
   top: 10px;
-}
+} */
 
-.toolbar {
+/* .toolbar {
   box-shadow: none;
-}
+} */
 
-.window, .toolbar-header {
+/* .window, .toolbar-header {
   border-top-left-radius: var(--window-border-radius);
   border-top-right-radius: var(--window-border-radius);
-}
+} */
 
 .window-content {
   background-color: var(--background-color);
 }
 
-.column {
-  width: 50%;
-  float: left;
-  margin: auto;
-  margin-top: 16px;
-  text-align: center;
-}
-
-.summary {
-  width: 100%;
-  margin: auto;
-  text-align: center;
-  margin-top: 16px;
-  font-size: var(--font-size);
-  font-weight: 300;
-  color: var(--text-color);
-}
-
-.reading {
-  font-size: calc(var(--font-size) + 6px);
-  font-weight: 300;
-  color: var(--text-color);
-}
-
-.description {
-  text-transform: uppercase;
-  color: #666;
-  font-size: calc(var(--font-size) - 3px);
-  font-weight: 300;
-}
-
-.footer-link {
+.title {
   padding-top: 8px;
   padding-left: 10px;
   /* font-size: calc(var(--font-size) - 4px); */
   float: left;
 }
 
-.footer-link a {
+.title a {
   color: var(--text-color);
+}
+
+#drag-file {
+  display: flex;
+  flex-direction: column;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center;
+  background-color: #fafafa;
+  color: #aaa;
+  width:100%;
+  height:100%;
+  border: 1px dashed #aaa;
+  font-size: 2em;
+  padding: 10px;
+}
+#help_section {
+  display: none;
+}
+
+#drag-file p {
+  margin: 0;
 }

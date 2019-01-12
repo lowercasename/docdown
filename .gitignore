@@ -59,9 +59,7 @@ typings/
 
 # next.js build output
 .next
-<<<<<<< HEAD
 
-node_modules
+dist/
+
 .DS_Store
-=======
->>>>>>> 9e5f22323874b130dc33784336a0b60803828535
