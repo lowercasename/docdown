@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DocDown Preferences</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./vendor/css/photon.css" media="screen" charset="utf-8">
+    <!-- <link rel="stylesheet" href="./index.css" media="screen" charset="utf-8"> -->
+    <style>
+    .window-content {
+      background-color: #f5f5f4;
+    }
+    </style>
+
+    <!-- Electron Javascript -->
+    <!-- <script src="app.js" charset="utf-8"></script> -->
+  </head>
+
+  <body>
+    <!-- Wrap your entire app inside .window -->
+    <div class="window">
+      <!-- Your app's content goes inside .window-content -->
+      <div class="window-content">
+        <div class="padded-more">
+          <form>
+            <div class="form-group">
+              <label>Folder to save exported files</label>
+              <input type="input" id="output_directory_input" class="form-control" style="width: 82%;" placeholder="Select a folder">
+              <button id="output_directory_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+            </div>
+            <div class="form-group">
+              <label>Location of Zotero bibliography file</label>
+              <input type="input" id="bibliography_file_input" class="form-control" style="width: 82%;" placeholder="Select a .bib file">
+              <button id="bibliography_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+            </div>
+            <div class="form-group">
+              <label>Location of CSL file</label>
+              <input type="input" id="csl_file_input" class="form-control" style="width: 82%;" placeholder="Select a .csl file">
+              <button id="csl_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+            </div>
+            <div class="form-group">
+              <label>Location of Word style reference file</label>
+              <input type="input" id="docx_file_input" class="form-control" style="width: 82%;" placeholder="Select a .docx file">
+              <button id="reference_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="open_on_startup"> Open DocDown on startup
+              </label>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>window.$ = window.jQuery = require('jquery');</script>
+  <script>
+    const { ipcRenderer } = require('electron');
+    const { dialog } = require('electron').remote;
+    require('electron-window').parseArgs()
+    preferencesObject = window.__args__
+    console.log(preferencesObject)
+    $(document).ready(function() {
+      $("#output_directory_input").val(preferencesObject.outputDirectory);
+      $("#bibliography_file_input").val(preferencesObject.bibliographyFile);
+      $("#csl_file_input").val(preferencesObject.cslFile);
+      $("#docx_file_input").val(preferencesObject.docxFile);
+      $("#open_on_startup").prop('checked', preferencesObject.autoLaunch);
+    })
+
+    ipcRenderer.on('preference_value', (event, payload) => {
+      $(payload.element).val(payload.value);
+    })
+    $("#output_directory_button").click(function(){
+      ipcRenderer.send('select_file', 'outputDirectory')
+    })
+    $("#bibliography_file_button").click(function(){
+      ipcRenderer.send('select_file', 'bibliographyFile')
+    })
+    $("#csl_file_button").click(function(){
+      ipcRenderer.send('select_file', 'cslFile')
+    })
+    $("#reference_file_button").click(function(){
+      ipcRenderer.send('select_file', 'docxFile')
+    })
+    $('#open_on_startup').change(function() {
+      if(this.checked) {
+        console.log("The checkbox is now checked")
+        ipcRenderer.send('set_auto_launch', true)
+        return;
+      }
+      console.log("The checkbox is now unchecked")
+      ipcRenderer.send('set_auto_launch', false)
+    });
+  </script>
+</html>
