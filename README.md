@@ -13,4 +13,4 @@ DocDown is essentially a wrapper for the process elaborated in [this blog post](
 
 ## Installing
 
-A MacOS binary is available [here](http://raphaelkabo.com/DocDown.dmg).
+A MacOS binary is available [here](http://raphaelkabo.com/assets/DocDown.dmg).
