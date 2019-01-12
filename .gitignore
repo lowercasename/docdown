@@ -59,5 +59,8 @@ typings/
 
 # next.js build output
 .next
+<<<<<<< HEAD
 
 node_modules
+=======
+>>>>>>> 9e5f22323874b130dc33784336a0b60803828535
