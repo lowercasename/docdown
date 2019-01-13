@@ -1,9 +1,9 @@
 {
   "name": "docdown",
-  "productName": "DocDown",
   "version": "0.1.0",
+  "description": "A menu bar app to convert Markdown into academia-ready Word documents",
   "main": "main.js",
-  "license": "ISC",
+  "license": "GPL",
   "author": "Raphael Kabo",
   "scripts": {
     "start": "electron .",
@@ -13,7 +13,7 @@
   "build": {
     "appId": "com.raphaelkabo.docdown",
     "asarUnpack": [
-      "./app/node_modules/node-notifier/vendor/**"
+      "assets"
     ],
     "mac": {
       "category": "public.app-category.utilities",
@@ -41,6 +41,7 @@
     "electron-main-notification": "^1.0.1",
     "electron-settings": "^3.2.0",
     "electron-window": "^0.8.1",
+    "hazardous": "^0.3.0",
     "jquery": "^3.3.1",
     "menubar": "^5.2.3",
     "mime-types": "^2.1.21",
