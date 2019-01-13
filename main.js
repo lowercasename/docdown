@@ -1,4 +1,5 @@
 const {app, BrowserWindow, ipcMain, Tray, dialog} = require('electron')
+require ('hazardous');
 const menubar = require('menubar')
 const path = require('path')
 const fs = require('fs')
