@@ -97,6 +97,7 @@
 
       holder.ondrop = (e) => {
           e.preventDefault();
+          $("#drag-file").css("background-color","#fafafa")
           console.log("Done did dropped!")
           for (let f of e.dataTransfer.files) {
             ipcRenderer.send('convert-file', {"path": f.path, "type": f.type});
