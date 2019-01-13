@@ -1,5 +1,6 @@
 {
   "name": "docdown",
+  "productName": "DocDown",
   "version": "0.1.0",
   "description": "A menu bar app to convert Markdown into academia-ready Word documents",
   "main": "main.js",
