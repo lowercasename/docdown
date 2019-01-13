@@ -13,6 +13,8 @@ It's ideal if you're already using Markdown and Zotero or get excited about twea
 - A CSL file (ditto - they all live [here](https://www.zotero.org/styles))
 - A reference .docx file (an example is available from the blog post)
 
+DocDown comes bundled with a few common CSL files and a few simple Word reference files, so you only need to supply your own .bib file and Pandoc.
+
 ## Installing
 
 A MacOS binary is available from the [releases section in this repository](https://github.com/lowercasename/docdown/releases).
