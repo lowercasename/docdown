@@ -8,7 +8,7 @@ It's ideal if you're already using Markdown and Zotero or get excited about twea
 
 ## Requirements
 
-- Pandoc version 2.0 or above (newest version downloadable from [here](https://pandoc.org/installing.html))
+- Pandoc version 2.0 or above (newest version downloadable from [here](https://pandoc.org/installing.html)) 
 - A Zotero .bib file (instructions in the blog post linked above)
 - A CSL file (ditto - they all live [here](https://www.zotero.org/styles))
 - A reference .docx file (an example is available from the blog post)
