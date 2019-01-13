@@ -15,7 +15,7 @@ It's ideal if you're already using Markdown and Zotero or get excited about twea
 
 ## Installing
 
-A MacOS binary is available [here](http://raphaelkabo.com/assets/DocDown.dmg).
+A MacOS binary is available from the [releases section in this repository](https://github.com/lowercasename/docdown/releases).
 
 ## Building from source
 
