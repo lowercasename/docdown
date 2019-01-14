@@ -8,6 +8,8 @@ It's ideal if you're already using Markdown and Zotero or get excited about twea
 
 ## Requirements
 
+DocDown is a cross-platform app, but has only been tested on macOS - chances are it won't work properly on Windows or Linux. I'm hoping to make it properly cross-platform by v0.3.
+
 - Pandoc version 2.0 or above (newest version downloadable from [here](https://pandoc.org/installing.html)) 
 - A Zotero .bib file (instructions in the blog post linked above)
 - A CSL file (ditto - they all live [here](https://www.zotero.org/styles))
