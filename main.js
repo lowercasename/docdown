@@ -1,5 +1,6 @@
 const {app, BrowserWindow, ipcMain, Tray, dialog} = require('electron')
 require ('hazardous');
+const semver = require('semver')
 const menubar = require('menubar')
 const path = require('path')
 const fs = require('fs')
@@ -29,10 +30,10 @@ async function convert(filepath) {
           return false;
         }
         else {
-          const pandocVersion = stdout.split('\n')[0].replace('pandoc ', '');
-          if (pandocVersion < 2.0) {
+          const pandocVersion = semver.coerce(stdout.split('\n')[0]);
+          if (semver.lt(pandocVersion, '2.0.0')) {
             dialog.showMessageBox({type: "warning", message: "Please update Pandoc to version 2.0 or higher."})
-            console.log('Pandoc too old: ' + error);
+            console.log('Pandoc too old: ' + pandocVersion);
             return false;
           }
           console.log("Pandoc version is " + pandocVersion);
