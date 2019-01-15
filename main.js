@@ -90,7 +90,7 @@ async function convert(filepath) {
 const assetsDirectory = path.join(__dirname, 'assets')
 
 var mb = menubar({
-  icon: path.join(assetsDirectory, 'docdown_icon.png'),
+  icon: path.join(assetsDirectory, 'docdown_iconTemplate.png'),
   width: 300,
   height: 400,
   transparent: false,
