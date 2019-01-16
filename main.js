@@ -17,74 +17,83 @@ var autoLauncher = new AutoLaunch({
 });
 
 async function convert(filepath) {
-  commandExists('pandoc', function(err, commandExists) {
-    if(commandExists) {
+  commandExists('pandoc', function(err, pandocExists) {
+    if(pandocExists) {
       // Pandoc exists!
-      var exec = require('child_process').exec;
-      var child;
-      child = exec("pandoc -v",
-      function (error, stdout, stderr) {
-        if (error !== null) {
-          dialog.showMessageBox({type: "warning", message: "I can't find Pandoc! Has it been installed?"})
-          console.log('error retrieving pandoc version: ' + error);
-          return false;
-        }
-        else {
-          const pandocVersion = semver.coerce(stdout.split('\n')[0]);
-          if (semver.lt(pandocVersion, '2.0.0')) {
-            dialog.showMessageBox({type: "warning", message: "Please update Pandoc to version 2.0 or higher."})
-            console.log('Pandoc too old: ' + pandocVersion);
-            return false;
-          }
-          console.log("Pandoc version is " + pandocVersion);
-          const settingsObject = {
-            outputDirectory: settings.get('user.outputDirectory', settings.get('defaults.outputDirectory')),
-            bibliographyFile: settings.get('user.bibliographyFile', settings.get('defaults.bibliographyFile')),
-            cslFile: settings.get('user.cslFile', settings.get('defaults.cslFile')),
-            docxFile: settings.get('user.docxFile', settings.get('defaults.docxFile'))
-          }
-          console.log(settingsObject);
-          if (settingsObject.outputDirectory === "" || settingsObject.bibliographyFile === "" || settingsObject.cslFile === "" || settingsObject.docxFile === "") {
-            dialog.showMessageBox({type: "warning", message: "Please set file paths for all the files DocDown requires!"})
-            return false;
-          }
-          const fileType = mime.lookup(filepath)
-          if (fileType === "text/markdown" || fileType === "text/plain"){
-            // It's a Markdown file!
-            var pandoc = require('node-pandoc')
-            const fileName = path.basename(filepath, path.extname(filepath))
-            // const parentDirectory = path.dirname(filepath)
-            const rawMarkdown = fs.readFileSync(filepath) + '\n\n# Bibliography'
-            const outputFile = settingsObject.outputDirectory + '/' + fileName + '.docx'
-
-            // This is where the magic happens, for a given definiton of 'magic'
-            const hellScapeMcHorrorFace = ['-s','--filter','pandoc-citeproc','--bibliography',settingsObject.bibliographyFile,'--csl',settingsObject.cslFile,'--reference-doc',settingsObject.docxFile,'-f','markdown+smart+escaped_line_breaks','-t','docx','-o',outputFile];
-
-            callback = function (err, result) {
-              if (err !== null) {
-                console.error('Oh Noes: ',err);
+      commandExists('pandoc-citeproc', function(err, citeprocExists) {
+        if(citeprocExists) {
+          var exec = require('child_process').exec;
+          var child;
+          child = exec("pandoc -v",
+          function (error, stdout, stderr) {
+            if (error !== null) {
+              // This shouldn't really ever come up because commandExists should catch it first, but if it doesn't...
+              dialog.showMessageBox({type: "warning", message: "I can't find Pandoc! Has it been installed?"})
+              console.log('Error retrieving pandoc version: ' + error);
+              return false;
+            }
+            else {
+              const pandocVersion = semver.coerce(stdout.split('\n')[0]);
+              if (semver.lt(pandocVersion, '2.0.0')) {
+                dialog.showMessageBox({type: "warning", message: "Please update Pandoc to version 2.0 or higher."})
+                console.log('Pandoc too old: ' + pandocVersion);
                 return false;
               }
+              console.log("Pandoc version is " + pandocVersion);
+              const settingsObject = {
+                outputDirectory: settings.get('user.outputDirectory', settings.get('defaults.outputDirectory')),
+                bibliographyFile: settings.get('user.bibliographyFile', settings.get('defaults.bibliographyFile')),
+                cslFile: settings.get('user.cslFile', settings.get('defaults.cslFile')),
+                docxFile: settings.get('user.docxFile', settings.get('defaults.docxFile'))
+              }
+              console.log(settingsObject);
+              if (settingsObject.outputDirectory === "" || settingsObject.bibliographyFile === "" || settingsObject.cslFile === "" || settingsObject.docxFile === "") {
+                dialog.showMessageBox({type: "warning", message: "Please set file paths for all the files DocDown requires!"})
+                return false;
+              }
+              const fileType = mime.lookup(filepath)
+              if (fileType === "text/markdown" || fileType === "text/plain"){
+                // It's a Markdown file!
+                var pandoc = require('node-pandoc')
+                const fileName = path.basename(filepath, path.extname(filepath))
+                // const parentDirectory = path.dirname(filepath)
+                const rawMarkdown = fs.readFileSync(filepath) + '\n\n# Bibliography'
+                const outputFile = settingsObject.outputDirectory + '/' + fileName + '.docx'
+
+                // This is where the magic happens, for a given definiton of 'magic'
+                const hellScapeMcHorrorFace = ['-s','--filter','pandoc-citeproc','--bibliography',settingsObject.bibliographyFile,'--csl',settingsObject.cslFile,'--reference-doc',settingsObject.docxFile,'-f','markdown+smart+escaped_line_breaks','-t','docx','-o',outputFile];
+
+                callback = function (err, result) {
+                  if (err !== null) {
+                    console.error('Oh Noes: ',err);
+                    return false;
+                  }
+                  else {
+                    console.log("Completed!")
+                    notify('Markdown converted sucessfully', { body: 'Word document saved in ' + settingsObject.outputDirectory })
+                    return console.log(result), result;
+                  }
+                }
+                pandoc(rawMarkdown, hellScapeMcHorrorFace, callback);
+              }
               else {
-                console.log("Completed!")
-                notify('Markdown converted sucessfully', { body: 'Word document saved in ' + settingsObject.outputDirectory })
-                return console.log(result), result;
+                notify('Markdown not converted', { body: "This isn't a Markdown file." })
+                return false;
               }
             }
-            pandoc(rawMarkdown, hellScapeMcHorrorFace, callback);
-          }
-          else {
-            notify('Markdown not converted', { body: "This isn't a Markdown file." })
-            return false;
-          }
+          });
         }
-      });
+        else {
+          dialog.showMessageBox({type: "warning", message: "I can't find pandoc-citeproc (Pandoc's citation conversion tool). Please install Pandoc using one of the full installers, or install pandoc-citeproc seperately."})
+          return false;
+        }
+      })
     }
     else {
       dialog.showMessageBox({type: "warning", message: "I can't find Pandoc! Has it been installed?"})
       return false;
     }
-  });
+  })
 }
 
 const assetsDirectory = path.join(__dirname, 'assets')
