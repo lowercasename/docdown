@@ -62,4 +62,6 @@ typings/
 
 dist/
 
+assets/bin
+
 .DS_Store
