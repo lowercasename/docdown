@@ -139,6 +139,11 @@
                   <input type="checkbox" id="open_on_startup"> Open DocDown on startup
                 </label>
               </div>
+              <div class="checkbox" style="margin-top:0px;">
+                <label>
+                  <input type="checkbox" id="auto_update_check"> Check for updates automatically
+                </label>
+              </div>
             </div>
             <div class="panel" id="updatesPanel">
               <p style="margin-top:0;">
@@ -158,7 +163,7 @@
               <button class="btn btn-large btn-positive" id="checkForNewReleaseButton">Check for updates</button>
             </div>
             <div id="footer">
-              <button class="btn btn-large btn-default pull-right" id="closeButton">Close</button>
+              <button class="btn btn-large btn-primary pull-right" id="closeButton">Close</button>
             </div>
           </div>
         </div>
@@ -178,6 +183,7 @@
       $("#csl_file_input").val(preferencesObject.cslSource == "internal" ? "" : preferencesObject.cslFile);
       $("#docx_file_input").val(preferencesObject.docxSource == "internal" ? "" : preferencesObject.docxFile);
       $("#open_on_startup").prop('checked', preferencesObject.autoLaunch);
+      $("#auto_update_check").prop('checked', preferencesObject.autoUpdateCheck);
       $("#csl_radio_internal").prop('checked', preferencesObject.cslSource == "internal" ? true : false);
       $("#csl_radio_external").prop('checked', preferencesObject.cslSource == "external" ? true : false);
       $("#docx_radio_internal").prop('checked', preferencesObject.docxSource == "internal" ? true : false);
@@ -277,6 +283,13 @@
         return;
       }
       ipcRenderer.send('set_auto_launch', false)
+    });
+    $('#auto_update_check').change(function() {
+      if(this.checked) {
+        ipcRenderer.send('set_auto_update_check', true)
+        return;
+      }
+      ipcRenderer.send('set_auto_update_check', false)
     });
     $( 'input[name="csl_radios"]:radio' ).change(function() {
       console.log("CSL radio clicked!");

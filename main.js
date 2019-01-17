@@ -156,6 +156,7 @@ mb.on('ready', function ready () {
   // If this is the first time this app is started, settings will be empty and need to be filled with defaults
   let settingsSet = settings.get("defaults.outputDirectory");
   if (!settingsSet) {
+    console.log("No settings are set!")
     settings.setAll({
       defaults: {
         outputDirectory: app.getPath('home'),
@@ -166,23 +167,33 @@ mb.on('ready', function ready () {
         docxFile: path.join(assetsDirectory, '/docx/pandoc-default-reference.docx'),
         docxSource: 'internal',
         docxInternalVal: 'pandoc',
-        autoLaunch: false
+        autoLaunch: false,
+        autoUpdateCheck: true
       }
     });
   }
 
+  // Check if 'autoUpdateCheck' setting is set (new in v0.2)
+  let autoUpdateCheckSet = settings.get("defaults.autoUpdateCheck");
+  if (!autoUpdateCheckSet) {
+    console.log("Auto update setting is missing!")
+    settings.set("defaults.autoUpdateCheck", true);
+  }
+
   // Check for new release
-  checkForNewRelease()
-    .then(
-      data => {
-        if (data.updateAvailable === true){
-          dialog.showMessageBox({type: "info", message: "A new version of DocDown is available to download! Check the preferences window for more information."})
+  if (settings.get("user.autoUpdateCheck", settings.get("defaults.autoUpdateCheck")) === true){
+    checkForNewRelease()
+      .then(
+        data => {
+          if (data.updateAvailable === true){
+            dialog.showMessageBox({type: "info", message: "A new version of DocDown is available to download! Check the preferences window for more information."})
+          }
         }
-      }
-    )
-    .catch(
-      reason => console.log(reason.message)
-    )
+      )
+      .catch(
+        reason => console.log(reason.message)
+      )
+  }
 
   mb.on('after-create-window', function(event){
     // mb.window.openDevTools({mode: 'detach'})
@@ -205,8 +216,6 @@ mb.on('ready', function ready () {
     });
   });
 })
-
-// console.log(settings.getAll());
 
 // Quit the app when the window is closed
 app.on('window-all-closed', () => {
@@ -306,6 +315,15 @@ ipcMain.on('set_auto_launch', (event, value) => {
     })
     setPreference("autoLaunch", false);
   }
+})
+
+ipcMain.on('set_auto_update_check', (event, value) => {
+  if (value === true){
+    setPreference("autoUpdateCheck", true);
+  }
+  else if (value === false){
+    setPreference("autoUpdateCheck", false);
+  }
 
 })
 
@@ -318,6 +336,7 @@ ipcMain.on('show-preferences', () => {
     cslFile: settings.get('user.cslFile', settings.get('defaults.cslFile')),
     docxFile: settings.get('user.docxFile', settings.get('defaults.docxFile')),
     autoLaunch: settings.get('user.autoLaunch', settings.get('defaults.autoLaunch')),
+    autoUpdateCheck: settings.get('user.autoUpdateCheck', settings.get('defaults.autoUpdateCheck')),
     cslSource: settings.get('user.cslSource', settings.get('defaults.cslSource')),
     docxSource: settings.get('user.docxSource', settings.get('defaults.docxSource')),
     cslInternalVal: settings.get('user.cslInternalVal', settings.get('defaults.cslInternalVal')),
