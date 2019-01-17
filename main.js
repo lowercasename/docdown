@@ -19,7 +19,7 @@ var autoLauncher = new AutoLaunch({
 
 async function checkForNewRelease () {
   let currentRelease = app.getVersion();
-  let response = await fetch('https://api.github.com/repos/lowercasename/docdown/releases/latest');
+  let response = await fetch('https://api.github.com/repos/lowercasename/docdown/releases/latest')
   let data = await response.json();
   let latestRelease = semver.coerce(data.tag_name)
   if (semver.gt(latestRelease.version, currentRelease)) {
@@ -52,7 +52,10 @@ ipcMain.on('checkForNewRelease', (event) => {
       }
     )
     .catch(
-      reason => console.log(reason.message)
+      reason => {
+        event.sender.send('update_notification', {updateAvailable: false, fetchError: true})
+        console.log(reason)
+      }
     )
 })
 
@@ -191,7 +194,9 @@ mb.on('ready', function ready () {
         }
       )
       .catch(
-        reason => console.log(reason.message)
+        reason => {
+          console.log(reason)
+        }
       )
   }
 

@@ -29,7 +29,8 @@
     #updatesPanel,
     #optionsPanel,
     #latestReleaseContainer,
-    #noNewReleaseContainer {
+    #noNewReleaseContainer,
+    #fetchError {
       display: none;
     }
     </style>
@@ -160,6 +161,9 @@
               <p id="noNewReleaseContainer">
                 You're up to date! 🎉
               </p>
+              <p id="fetchError">
+                <span class="icon icon-attention"></span> DocDown is having trouble connecting to the update server. Please check your network settings and try again later.
+              </p>
               <button class="btn btn-large btn-positive" id="checkForNewReleaseButton">Check for updates</button>
             </div>
             <div id="footer">
@@ -245,9 +249,18 @@
             if (result.updateAvailable === true){
               $("#latestRelease").html(result.latestRelease)
               $("#latestReleaseContainer").show()
+              $("#noNewReleaseContainer").hide()
+              $("#fetchError").hide()
+            }
+            else if (result.fetchError === true) {
+              $("#fetchError").show()
+              $("#latestReleaseContainer").hide()
+              $("#noNewReleaseContainer").hide()
             }
             else {
               $("#noNewReleaseContainer").show()
+              $("#latestReleaseContainer").hide()
+              $("#fetchError").hide()
             }
           })
         });
