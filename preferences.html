@@ -8,7 +8,7 @@
     <!-- <link rel="stylesheet" href="./index.css" media="screen" charset="utf-8"> -->
     <style>
     .window-content {
-      background-color: #f5f5f4;
+      /* background-color: #f5f5f4; */
     }
     button:disabled,
     button[disabled]{
@@ -26,6 +26,12 @@
       background-color: #eee;
       color: #aaa;
     }
+    #updatesPanel,
+    #optionsPanel,
+    #latestReleaseContainer,
+    #noNewReleaseContainer {
+      display: none;
+    }
     </style>
 
     <!-- Electron Javascript -->
@@ -33,88 +39,136 @@
   </head>
 
   <body>
-    <!-- Wrap your entire app inside .window -->
     <div class="window">
-      <!-- Your app's content goes inside .window-content -->
+      <header class="toolbar toolbar-header draggable">
+        <h1 class="title">DocDown preferences</h1>
+      </header>
       <div class="window-content">
-        <div class="padded-more">
-          <form>
-            <div class="form-group">
-              <label>Folder to save exported files</label>
-              <input type="input" id="output_directory_input" class="form-control" style="width: 82%;" placeholder="Select a folder">
-              <button type="button" id="output_directory_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+        <div class="pane-group">
+          <div class="pane-sm sidebar">
+            <ul class="list-group" id="sidebarList">
+              <li class="list-group-item active" id="fileLocationsPanelToggle">
+                <div class="media-body" style="display:flex;align-items: center;">
+                  <span class="icon icon-doc-text" style="font-size:22px;margin-right:10px;"></span>
+                  <p style="font-size:16px;">File locations</p>
+                </div>
+              </li>
+              <li class="list-group-item" id="optionsPanelToggle">
+                <div class="media-body" style="display:flex;align-items: center;">
+                  <span class="icon icon-tools" style="font-size:22px;margin-right:10px;"></span>
+                  <p style="font-size:16px;">Other options</p>
+                </div>
+              </li>
+              <li class="list-group-item" id="updatesPanelToggle">
+                <div class="media-body" style="display:flex;align-items: center;">
+                  <span class="icon icon-arrows-ccw" style="font-size:22px;margin-right:10px;"></span>
+                  <p style="font-size:16px;">Updates</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="panelsContainer" class="pane padded-more" style="display: flex;flex-direction: column;justify-content: space-between;">
+            <div class="panel" id="fileLocationsPanel">
+              <form>
+                <div class="form-group">
+                  <label>Folder to save exported files</label>
+                  <input type="input" id="output_directory_input" class="form-control" style="width: 82%;" placeholder="Select a folder">
+                  <button type="button" id="output_directory_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+                </div>
+                <hr />
+                <div class="form-group">
+                  <label>Location of Zotero bibliography file</label>
+                  <input type="input" id="bibliography_file_input" class="form-control" style="width: 82%;" placeholder="Select a .bib file">
+                  <button type="button" id="bibliography_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+                </div>
+                <hr />
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="csl_radios" id="csl_radio_internal">
+                    Use an included CSL file
+                  </label>
+                  <select class="form-control" id="internal_csl_selector" style="margin-left:20px;">
+                    <option value="none">Select a citation style</option>
+                    <option value="apa">American Psychological Association 6th edition</option>
+                    <option value="chicago-ad">Chicago Manual of Style 17th edition (Author-Date)</option>
+                    <option value="chicago-note">Chicago Manual of Style 17th edition (Note)</option>
+                    <option value="mhra-ad">Modern Humanities Research Association 3rd edition (Author-Date)</option>
+                    <option value="mhra-note">Modern Humanities Research Association 3rd edition (Note)</option>
+                    <option value="mla">Modern Language Association 8th edition</option>
+                  </select>
+                </div>
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="csl_radios" id="csl_radio_external">
+                    Choose a custom CSL file
+                  </label>
+                  <div class="form-group" style="margin-left:20px;">
+                    <input type="input" id="csl_file_input" class="form-control" style="width: 82%;" placeholder="Select a .csl file">
+                    <button type="button" id="csl_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+                  </div>
+                </div>
+                <hr />
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="docx_radios" id="docx_radio_internal">
+                    Use an included Word style reference file
+                  </label>
+                  <select class="form-control" id="internal_docx_selector" style="margin-left:20px;">
+                    <option value="none">Select a style</option>
+                    <option value="pandoc">Pandoc default (Calibri/Cambria)</option>
+                    <option value="paperback">Paperback (Futura/Garamond)</option>
+                    <option value="computer">Computer (CMU Serif)</option>
+                    <option value="report">Report (Times New Roman)</option>
+                  </select>
+                </div>
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="docx_radios" id="docx_radio_external">
+                    Choose a custom Word style reference file
+                  </label>
+                  <div class="form-group" style="margin-left:20px;">
+                    <input type="input" id="docx_file_input" class="form-control" style="width: 82%;" placeholder="Select a .docx file">
+                    <button type="button" id="docx_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+                  </div>
+                </div>
+              </form>
             </div>
-            <hr />
-            <div class="form-group">
-              <label>Location of Zotero bibliography file</label>
-              <input type="input" id="bibliography_file_input" class="form-control" style="width: 82%;" placeholder="Select a .bib file">
-              <button type="button" id="bibliography_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
-            </div>
-            <hr />
-            <div class="radio">
-              <label>
-                <input type="radio" name="csl_radios" id="csl_radio_internal">
-                Use an included CSL file
-              </label>
-              <select class="form-control" id="internal_csl_selector" style="margin-left:20px;">
-                <option value="none">Select a citation style</option>
-                <option value="apa">American Psychological Association 6th edition</option>
-                <option value="chicago-ad">Chicago Manual of Style 17th edition (Author-Date)</option>
-                <option value="chicago-note">Chicago Manual of Style 17th edition (Note)</option>
-                <option value="mhra-ad">Modern Humanities Research Association 3rd edition (Author-Date)</option>
-                <option value="mhra-note">Modern Humanities Research Association 3rd edition (Note)</option>
-                <option value="mla">Modern Language Association 8th edition</option>
-              </select>
-            </div>
-            <div class="radio">
-              <label>
-                <input type="radio" name="csl_radios" id="csl_radio_external">
-                Choose a custom CSL file
-              </label>
-              <div class="form-group" style="margin-left:20px;">
-                <input type="input" id="csl_file_input" class="form-control" style="width: 82%;" placeholder="Select a .csl file">
-                <button type="button" id="csl_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+            <div class="panel" id="optionsPanel">
+              <div class="checkbox" style="margin-top:0px;">
+                <label>
+                  <input type="checkbox" id="open_on_startup"> Open DocDown on startup
+                </label>
               </div>
             </div>
-            <hr />
-            <div class="radio">
-              <label>
-                <input type="radio" name="docx_radios" id="docx_radio_internal">
-                Use an included Word style reference file
-              </label>
-              <select class="form-control" id="internal_docx_selector" style="margin-left:20px;">
-                <option value="none">Select a style</option>
-                <option value="pandoc">Pandoc default (Calibri/Cambria)</option>
-                <option value="paperback">Paperback (Futura/Garamond)</option>
-                <option value="computer">Computer (CMU Serif)</option>
-                <option value="report">Report (Times New Roman)</option>
-              </select>
-            </div>
-            <div class="radio">
-              <label>
-                <input type="radio" name="docx_radios" id="docx_radio_external">
-                Choose a custom Word style reference file
-              </label>
-              <div class="form-group" style="margin-left:20px;">
-                <input type="input" id="docx_file_input" class="form-control" style="width: 82%;" placeholder="Select a .docx file">
-                <button type="button" id="docx_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+            <div class="panel" id="updatesPanel">
+              <p style="margin-top:0;">
+                You are using DocDown version <strong id="currentRelease"></strong>.
+              </p>
+              <div id="latestReleaseContainer">
+                <p>
+                  A new version of DocDown (<strong id="latestRelease"></strong>) is available! 🙌
+                </p>
+                <p>
+                  Please update now by <a id="external_link" href="https://github.com/lowercasename/docdown">clicking here</a>, downloading the latest release for your platform, and replacing the current version with the new release.
+                </p>
               </div>
+              <p id="noNewReleaseContainer">
+                You're up to date! 🎉
+              </p>
+              <button class="btn btn-large btn-positive" id="checkForNewReleaseButton">Check for updates</button>
             </div>
-            <hr />
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" id="open_on_startup"> Open DocDown on startup
-              </label>
+            <div id="footer">
+              <button class="btn btn-large btn-default pull-right" id="closeButton">Close</button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
   </body>
   <script>window.$ = window.jQuery = require('jquery');</script>
   <script>
-    const { ipcRenderer } = require('electron');
-    const { dialog } = require('electron').remote;
+    const { ipcRenderer, shell } = require('electron');
+    const remote = require('electron').remote;
     require('electron-window').parseArgs()
     preferencesObject = window.__args__
     console.log(preferencesObject)
@@ -130,8 +184,7 @@
       $("#docx_radio_external").prop('checked', preferencesObject.docxSource == "external" ? true : false);
       $("#internal_csl_selector").val(preferencesObject.cslSource == "internal" ? preferencesObject.cslInternalVal : "none")
       $("#internal_docx_selector").val(preferencesObject.docxSource == "internal" ? preferencesObject.docxInternalVal : "none")
-      console.log("preferencesObject.cslSource: " + preferencesObject.cslSource);
-      console.log("preferencesObject.docxSource: " + preferencesObject.docxSource);
+      $("#currentRelease").html(preferencesObject.currentRelease);
       if ($("#csl_radio_internal").is(":checked")){
         console.log("CSL internal checked!");
         $("#csl_file_input").prop("disabled",true);
@@ -151,7 +204,58 @@
         $("#internal_docx_selector").prop("disabled",true);
       }
     })
-
+    $("#fileLocationsPanelToggle").click(function(){
+      if($("#fileLocationsPanel").is(":hidden")){
+        $("#sidebarList>li").removeClass("active")
+        $(this).addClass("active")
+        $(".panel").hide();
+        $("#fileLocationsPanel").show();
+      }
+    })
+    $("#optionsPanelToggle").click(function(){
+      if($("#optionsPanel").is(":hidden")){
+        $("#sidebarList>li").removeClass("active")
+        $(this).addClass("active")
+        $(".panel").hide();
+        $("#optionsPanel").show();
+      }
+    })
+    $("#updatesPanelToggle").click(function(){
+      if($("#updatesPanel").is(":hidden")){
+        $("#sidebarList>li").removeClass("active")
+        $(this).addClass("active")
+        $(".panel").hide();
+        $("#updatesPanel").show();
+      }
+    })
+    $("#checkForNewReleaseButton").click(function(){
+      $(this).html('<span class="icon icon-arrows-ccw" style="color:#fff;padding-right:5px;"></span> Checking...').removeClass("btn-positive").addClass("btn-warning")
+      function checkForNewRelease() {
+        return new Promise(resolve => {
+          ipcRenderer.send('checkForNewRelease')
+          ipcRenderer.on('update_notification', (event, result) => {
+            resolve(result);
+            $("#checkForNewReleaseButton").html('Check for updates').removeClass("btn-warning").addClass("btn-positive")
+            if (result.updateAvailable === true){
+              $("#latestRelease").html(result.latestRelease)
+              $("#latestReleaseContainer").show()
+            }
+            else {
+              $("#noNewReleaseContainer").show()
+            }
+          })
+        });
+      }
+      checkForNewRelease()
+    })
+    $("#closeButton").click(function(){
+      var window = remote.getCurrentWindow();
+      window.close();
+    })
+    $("#external_link").click(function(e){
+      e.preventDefault();
+      shell.openExternal('https://github.com/lowercasename/docdown/releases/latest')
+    })
     ipcRenderer.on('preference_value', (event, payload) => {
       $(payload.element).val(payload.value);
     })

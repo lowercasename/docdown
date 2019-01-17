@@ -10,11 +10,53 @@ const settings = require('electron-settings');
 const AutoLaunch = require('auto-launch');
 const commandExists = require('command-exists');
 const notify = require('electron-main-notification')
+const fetch = require('node-fetch');
 
 var autoLauncher = new AutoLaunch({
     name: 'DocDown',
     isHidden: true
 });
+
+async function checkForNewRelease () {
+  let currentRelease = app.getVersion();
+  let response = await fetch('https://api.github.com/repos/lowercasename/docdown/releases/latest');
+  let data = await response.json();
+  let latestRelease = semver.coerce(data.tag_name)
+  if (semver.gt(latestRelease.version, currentRelease)) {
+    return {
+      updateAvailable: true,
+      latestRelease: latestRelease.version,
+      releaseDate: latestRelease.publishedAt,
+      currentRelease: currentRelease
+    }
+  }
+  else {
+    return {
+      updateAvailable: false
+    }
+  }
+}
+
+
+ipcMain.on('checkForNewRelease', (event) => {
+  console.log("Checking for new release!")
+  checkForNewRelease()
+    .then(
+      data => {
+        if (data){
+          event.sender.send('update_notification', data)
+        }
+        else {
+          event.sender.send('update_notification', {updateAvailable: false})
+        }
+      }
+    )
+    .catch(
+      reason => console.log(reason.message)
+    )
+})
+
+
 
 async function convert(filepath) {
   commandExists('pandoc', function(err, pandocExists) {
@@ -112,7 +154,7 @@ mb.on('ready', function ready () {
   process.env.PATH += ':/usr/local/bin:/usr/local/sbin';
 
   // If this is the first time this app is started, settings will be empty and need to be filled with defaults
-  settingsSet = settings.get("defaults.outputDirectory");
+  let settingsSet = settings.get("defaults.outputDirectory");
   if (!settingsSet) {
     settings.setAll({
       defaults: {
@@ -128,6 +170,19 @@ mb.on('ready', function ready () {
       }
     });
   }
+
+  // Check for new release
+  checkForNewRelease()
+    .then(
+      data => {
+        if (data.updateAvailable === true){
+          dialog.showMessageBox({type: "info", message: "A new version of DocDown is available to download! Check the preferences window for more information."})
+        }
+      }
+    )
+    .catch(
+      reason => console.log(reason.message)
+    )
 
   mb.on('after-create-window', function(event){
     // mb.window.openDevTools({mode: 'detach'})
@@ -255,7 +310,7 @@ ipcMain.on('set_auto_launch', (event, value) => {
 })
 
 ipcMain.on('show-preferences', () => {
-  const preferencesWindow = eWindow.createWindow({ width: 486, height: 600, preload: true, resizable: false })
+  const preferencesWindow = eWindow.createWindow({ width: 686, height: 600, preload: true, resizable: false, frame: false })
   const preferencesPath = path.resolve(__dirname, 'preferences.html')
   const settingsObject = {
     outputDirectory: settings.get('user.outputDirectory', settings.get('defaults.outputDirectory')),
@@ -266,7 +321,8 @@ ipcMain.on('show-preferences', () => {
     cslSource: settings.get('user.cslSource', settings.get('defaults.cslSource')),
     docxSource: settings.get('user.docxSource', settings.get('defaults.docxSource')),
     cslInternalVal: settings.get('user.cslInternalVal', settings.get('defaults.cslInternalVal')),
-    docxInternalVal: settings.get('user.docxInternalVal', settings.get('defaults.docxInternalVal'))
+    docxInternalVal: settings.get('user.docxInternalVal', settings.get('defaults.docxInternalVal')),
+    currentRelease: app.getVersion()
   }
   console.log(settingsObject);
   preferencesWindow.showUrl(preferencesPath, settingsObject)
