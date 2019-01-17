@@ -1,11 +1,11 @@
-const {app, BrowserWindow, ipcMain, Tray, dialog} = require('electron')
+const {app, BrowserWindow, ipcMain, Tray, dialog} = require('electron');
 require ('hazardous');
 const semver = require('semver')
 const menubar = require('menubar')
 const path = require('path')
 const fs = require('fs')
 const mime = require('mime-types')
-const eWindow = require('electron-window')
+const window = require('electron-window')
 const settings = require('electron-settings');
 const AutoLaunch = require('auto-launch');
 const commandExists = require('command-exists');
@@ -16,6 +16,12 @@ var autoLauncher = new AutoLaunch({
     name: 'DocDown',
     isHidden: true
 });
+
+function showIntroductionWindow(){
+  const introductionWindow = window.createWindow({ width: 550, height: 460, resizable: false, frame: false })
+  const introductionPath = path.resolve(__dirname, 'introduction.html')
+  introductionWindow.showUrl(introductionPath)
+}
 
 async function checkForNewRelease () {
   let currentRelease = app.getVersion();
@@ -37,7 +43,6 @@ async function checkForNewRelease () {
   }
 }
 
-
 ipcMain.on('checkForNewRelease', (event) => {
   console.log("Checking for new release!")
   checkForNewRelease()
@@ -58,8 +63,6 @@ ipcMain.on('checkForNewRelease', (event) => {
       }
     )
 })
-
-
 
 async function convert(filepath) {
   commandExists('pandoc', function(err, pandocExists) {
@@ -173,7 +176,10 @@ mb.on('ready', function ready () {
         autoLaunch: false,
         autoUpdateCheck: true
       }
-    });
+    })
+    // If there aren't any settings, this is also the first time the app
+    // has been launched, so show the introduction window
+    showIntroductionWindow();
   }
 
   // Check if 'autoUpdateCheck' setting is set (new in v0.2)
@@ -223,9 +229,9 @@ mb.on('ready', function ready () {
 })
 
 // Quit the app when the window is closed
-app.on('window-all-closed', () => {
-  app.quit()
-})
+// app.on('window-all-closed', () => {
+//   app.quit()
+// })
 
 app.on('will-finish-launching', ()=>{
   app.on('open-file', function(event, file) {
@@ -333,7 +339,7 @@ ipcMain.on('set_auto_update_check', (event, value) => {
 })
 
 ipcMain.on('show-preferences', () => {
-  const preferencesWindow = eWindow.createWindow({ width: 686, height: 600, preload: true, resizable: false, frame: false })
+  const preferencesWindow = window.createWindow({ width: 686, height: 600, preload: true, resizable: false, frame: false })
   const preferencesPath = path.resolve(__dirname, 'preferences.html')
   const settingsObject = {
     outputDirectory: settings.get('user.outputDirectory', settings.get('defaults.outputDirectory')),
