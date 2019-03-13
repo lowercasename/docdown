@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="./vendor/css/photon.css" media="screen" charset="utf-8">
     <!-- <link rel="stylesheet" href="./index.css" media="screen" charset="utf-8"> -->
     <style>
+    .title {
+      font-size: 14px;
+    }
     .window-content {
       /* background-color: #f5f5f4; */
     }
@@ -73,13 +76,13 @@
               <form>
                 <div class="form-group">
                   <label>Folder to save exported files</label>
-                  <input type="input" id="output_directory_input" class="form-control" style="width: 82%;" placeholder="Select a folder">
+                  <input type="input" id="output_directory_input" class="form-control" style="width: 82%;" placeholder="Select a folder" readonly>
                   <button type="button" id="output_directory_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
                 </div>
                 <hr />
                 <div class="form-group">
                   <label>Location of Zotero bibliography file</label>
-                  <input type="input" id="bibliography_file_input" class="form-control" style="width: 82%;" placeholder="Select a .bib file">
+                  <input type="input" id="bibliography_file_input" class="form-control" style="width: 82%;" placeholder="Select a .bib file" readonly>
                   <button type="button" id="bibliography_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
                 </div>
                 <hr />
@@ -104,7 +107,7 @@
                     Choose a custom CSL file
                   </label>
                   <div class="form-group" style="margin-left:20px;">
-                    <input type="input" id="csl_file_input" class="form-control" style="width: 82%;" placeholder="Select a .csl file">
+                    <input type="input" id="csl_file_input" class="form-control" style="width: 82%;" placeholder="Select a .csl file" readonly>
                     <button type="button" id="csl_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
                   </div>
                 </div>
@@ -128,7 +131,7 @@
                     Choose a custom Word style reference file
                   </label>
                   <div class="form-group" style="margin-left:20px;">
-                    <input type="input" id="docx_file_input" class="form-control" style="width: 82%;" placeholder="Select a .docx file">
+                    <input type="input" id="docx_file_input" class="form-control" style="width: 82%;" placeholder="Select a .docx file" readonly>
                     <button type="button" id="docx_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
                   </div>
                 </div>
@@ -145,6 +148,24 @@
                   <input type="checkbox" id="auto_update_check"> Check for updates automatically
                 </label>
               </div>
+              <hr />
+              <h5>Advanced settings</h5>
+              <p>
+                If you're not sure what these settings do, it's best to leave them as they are.
+              </p>
+              <div class="checkbox" style="margin-top:0px;">
+                <label>
+                  <input type="checkbox" id="use_bundled_pandoc"> Use bundled Pandoc and pandoc-citeproc
+                </label><br />
+                <span style="color:#aaa;">If this option is disabled, DocDown will attempt to use a globally installed instance of Pandoc and pandoc-citeproc.</span>
+              </div>
+              <!-- <div class="form-group">
+                <label>Additional Pandoc extensions</label>
+                <p>
+                  DocDown uses +smart+escaped_line_breaks by default. The contents of this field will be passed directly to the Pandoc conversion command.
+                </p>
+                <input type="input" id="pandoc_extensions" class="form-control" placeholder="+smart+escaped_line_breaks">
+              </div> -->
             </div>
             <div class="panel" id="updatesPanel">
               <p style="margin-top:0;">
@@ -154,6 +175,8 @@
                 <p>
                   A new version of DocDown (<strong id="latestRelease"></strong>) is available! 🙌
                 </p>
+                <div id="updateInformation" style="font-size:smaller;border:1px solid #ccc;border-radius:4px;width: 100%;padding:5px;margin:10px 0;">
+                </div>
                 <p>
                   Please update now by <a id="external_link" href="https://github.com/lowercasename/docdown">clicking here</a>, downloading the latest release for your platform, and replacing the current version with the new release.
                 </p>
@@ -182,12 +205,26 @@
     preferencesObject = window.__args__
     console.log(preferencesObject)
     $(document).ready(function() {
+
+      // Whitelist for Pandoc extensions input field to prevent command injection
+
+      // $.fn.whitelist = function(chars){
+      //     var $this = $(this), chars = chars.split('');
+      //     $this.keypress(function(e){
+      //       if (chars.indexOf(String.fromCharCode(e.which)) == -1){ return false; }});
+      //     return $this;
+      // };
+
+      // $("#pandoc_extensions").whitelist("abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_+-");
+
       $("#output_directory_input").val(preferencesObject.outputDirectory);
       $("#bibliography_file_input").val(preferencesObject.bibliographyFile);
       $("#csl_file_input").val(preferencesObject.cslSource == "internal" ? "" : preferencesObject.cslFile);
       $("#docx_file_input").val(preferencesObject.docxSource == "internal" ? "" : preferencesObject.docxFile);
       $("#open_on_startup").prop('checked', preferencesObject.autoLaunch);
       $("#auto_update_check").prop('checked', preferencesObject.autoUpdateCheck);
+      $("#use_bundled_pandoc").prop('checked', preferencesObject.useBundledPandoc);
+      // $("#pandoc_extensions").val(preferencesObject.pandocExtensions);
       $("#csl_radio_internal").prop('checked', preferencesObject.cslSource == "internal" ? true : false);
       $("#csl_radio_external").prop('checked', preferencesObject.cslSource == "external" ? true : false);
       $("#docx_radio_internal").prop('checked', preferencesObject.docxSource == "internal" ? true : false);
@@ -247,7 +284,13 @@
             resolve(result);
             $("#checkForNewReleaseButton").html('Check for updates').removeClass("btn-warning").addClass("btn-positive")
             if (result.updateAvailable === true){
-              $("#latestRelease").html(result.latestRelease)
+              let releaseDate = new Date(result.releaseDate).toLocaleDateString('en-GB', {
+              	day : 'numeric',
+              	month : 'short',
+              	year : 'numeric'
+              })
+              $("#latestRelease").html(result.latestRelease + ", released " + releaseDate)
+              $("#updateInformation").html(result.releaseInformation.replace(/\n/g, '<br />'))
               $("#latestReleaseContainer").show()
               $("#noNewReleaseContainer").hide()
               $("#fetchError").hide()
@@ -303,6 +346,13 @@
         return;
       }
       ipcRenderer.send('set_auto_update_check', false)
+    });
+    $('#use_bundled_pandoc').change(function() {
+      if(this.checked) {
+        ipcRenderer.send('set_pandoc_source', true)
+        return;
+      }
+      ipcRenderer.send('set_pandoc_source', false)
     });
     $( 'input[name="csl_radios"]:radio' ).change(function() {
       console.log("CSL radio clicked!");
