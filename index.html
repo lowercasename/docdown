@@ -31,26 +31,31 @@
       </header>
 
       <div class="window-content" style="padding:10px;">
-
+        <div id="drag-file-container">
           <div id="drag-file">
+            <p>
+              ⚡️📝⚡️
+            </p>
+            <p>
+              Drag some<br />Markdown<br />files here!
+            </p>
             <p>
               ⚡️📖⚡️
             </p>
-            <!-- <span class="icon icon-docs" style="font-size: 2em;"></span> -->
-            <p>Drag some Markdown files here!</p>
           </div>
-          <div id="help_section">
-            <p>
-              DocDown is a menu bar utility to convert files written in the lightweight Markdown syntax into academia-ready Word documents. Drop a file with the .txt, .md, or .markdown extension into DocDown, or export a file into it from an application like Ulysses, and it will export a Word file into your chosen directory.
-            </p>
-            <p>
-              DocDown requires the file conversion utility Pandoc to be installed on your system to function. You also need to select a Zotero bibliography file, a CSL file, and a reference .docx file in the preferences window. Confused? Visit the <a id="external_link" style="color:inherit" href="https://github.com/lowercasename/docdown">DocDown website</a> to get set up.
-            </p>
-            <p>
-              Happy converting!
-            </p>
-          </div>
-
+          <button type="button" class="btn btn-large btn-primary" id="convert_again_button">Convert last converted file again</button>
+        </div>
+        <div id="help_section">
+          <p>
+            DocDown is a menu bar utility to convert files written in the lightweight Markdown syntax into academia-ready Word documents. Drop a file with the .txt, .md, or .markdown extension into DocDown, or export a file into it from an application like Ulysses, and it will export a Word file into your chosen directory.
+          </p>
+          <p>
+            DocDown requires the file conversion utility Pandoc to be installed on your system to function. You also need to select a Zotero bibliography file, a CSL file, and a reference .docx file in the preferences window. Confused? Visit the <a id="external_link" style="color:inherit" href="https://github.com/lowercasename/docdown">DocDown website</a> to get set up.
+          </p>
+          <p>
+            Happy converting!
+          </p>
+        </div>
       </div>
     </div>
   </body>
@@ -64,7 +69,7 @@
     ipcRenderer.send('show-preferences');
   });
   $("#help_button").click(function(){
-    $("#drag-file").toggle();
+    $("#drag-file-container").toggle();
     $("#help_section").toggle();
     $(this).toggleClass("active");
   });
@@ -78,28 +83,29 @@
     })
   })
   $(document).ready(function() {
+      $("#convert_again_button").click(function(){
+        ipcRenderer.send('convert_again');
+      })
+
       var holder = document.getElementById('drag-file')
 
-      holder.ondragover = () => {
+      holder.ondragover = (event) => {
+        event.preventDefault();
         $("#drag-file").css("background-color","#ededed")
-        return false;
+        console.log("Dragging over!")
       };
 
-      holder.ondragleave = () => {
+      holder.ondragleave = (event) => {
+        event.preventDefault();
         $("#drag-file").css("background-color","#fafafa")
-          return false;
+          console.log("Dragging left!")
       };
 
-      holder.ondragend = () => {
-        $("#drag-file").css("background-color","#fafafa")
-        return false;
-      };
-
-      holder.ondrop = (e) => {
-          e.preventDefault();
+      holder.ondrop = (event) => {
+          event.preventDefault();
           $("#drag-file").css("background-color","#fafafa")
           console.log("Done did dropped!")
-          for (let f of e.dataTransfer.files) {
+          for (let f of event.dataTransfer.files) {
             ipcRenderer.send('convert-file', {"path": f.path, "type": f.type});
           }
 

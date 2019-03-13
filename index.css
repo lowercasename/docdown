@@ -47,6 +47,11 @@
   color: var(--text-color);
 }
 
+#drag-file-container {
+  margin: 10px;
+  width: 100%;
+}
+
 #drag-file {
   display: flex;
   flex-direction: column;
@@ -56,10 +61,11 @@
   background-color: #fafafa;
   color: #aaa;
   width:100%;
-  height:100%;
-  border: 1px dashed #aaa;
+  height:90%;
+  border: 3px dashed #aaa;
   font-size: 2em;
   padding: 10px;
+  border-radius: 5px;
 }
 #help_section {
   display: none;
@@ -67,4 +73,9 @@
 
 #drag-file p {
   margin: 0;
+}
+
+#convert_again_button {
+  width: 100%;
+  margin-top: 10px;
 }
