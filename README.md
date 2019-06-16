@@ -12,11 +12,11 @@ DocDown is a cross-platform app, but has only been tested on macOS - chances are
 
 For DocDown to work, you need to supply:
 
-- A Zotero .bib file (instructions to create one are in the blog post linked above)
+- A Zotero .json (recommended), .yaml (recommended), or .bib file (instructions to create one are in the blog post linked above)
 - A CSL file (ditto - they all live [here](https://www.zotero.org/styles))
 - A reference .docx file (an example is available from the blog post)
 
-The good news is that DocDown comes bundled with a few common CSL files and a few simple Word reference files, so you only need to supply your own .bib file.
+The good news is that DocDown comes bundled with a few common CSL files and a few simple Word reference files, so you only need to supply your own .json/.yaml file.
 
 You can _optionally_ supply your own, locally installed, copy of Pandoc (at least version 2.0) and pandoc-citeproc, but DocDown comes with bundled binaries of both.
 
