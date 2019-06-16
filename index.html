@@ -78,9 +78,16 @@
     shell.openExternal('https://github.com/lowercasename/docdown')
   })
   ipcRenderer.on('notify', (event, payload) => {
-    let notification = new Notification(payload.title, {
-      body: payload.body
-    })
+    console.log(payload)
+    const notification = {
+        title: payload.title,
+        body: payload.body
+    }
+    const showNotification = new window.Notification(notification.title, notification);
+    // let notification = new Notification(payload.title, {
+    //   body: payload.body
+    // })
+    // console.log(showNotification)
   })
   $(document).ready(function() {
       $("#convert_again_button").click(function(){

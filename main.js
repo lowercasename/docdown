@@ -101,7 +101,8 @@ async function convert(filepath) {
   // First, check if we should even be trying to convert this file
   const fileType = mime.lookup(filepath)
   if (!(fileType == "text/markdown") && !(fileType == "text/plain")) {
-    notify('Markdown not converted', { body: path.basename(filepath) + " is not a Markdown file." })
+    // notify('Markdown not converted', { body: path.basename(filepath) + " is not a Markdown file." })
+    nativeNotify({ title: 'Markdown not converted', body: path.basename(filepath) + ' is not a Markdown file.' })
     console.log("Not a Markdown file")
     return false;
   }
@@ -114,7 +115,6 @@ async function convert(filepath) {
     cslFile: settings.get('user.cslFile', settings.get('defaults.cslFile')),
     docxFile: settings.get('user.docxFile', settings.get('defaults.docxFile'))
   }
-  // console.log(settingsObject);
   if (settingsObject.outputDirectory === "" || settingsObject.bibliographyFile === "" || settingsObject.cslFile === "" || settingsObject.docxFile === "") {
     dialog.showMessageBox({type: "warning", message: "Please set file paths for all the files DocDown requires. You can set these paths in DocDown's preferences window (click the cog button in the DocDown window)."})
     return false;
@@ -141,9 +141,11 @@ async function convert(filepath) {
       pandocProcess.stdin.write(rawMarkdown);
       pandocProcess.stdin.end();
       console.log("Converted successfully.")
-      notify('Markdown converted sucessfully', { body: 'Word document saved in ' + settingsObject.outputDirectory, silent: true }, () => {
-        shell.showItemInFolder(settingsObject.outputDirectory + '/' + fileName + '.docx')
-      })
+      // notify('Markdown converted sucessfully', { body: 'Word document saved in ' + settingsObject.outputDirectory, silent: true }, () => {
+      //   shell.showItemInFolder(settingsObject.outputDirectory + '/' + fileName + '.docx')
+      // })
+      nativeNotify({ title: 'Markdown converted sucessfully', body: 'Word document saved in ' + settingsObject.outputDirectory, silent: true })
+      shell.showItemInFolder(settingsObject.outputDirectory + '/' + fileName + '.docx')
       setPreference("lastConvertedFile",filepath);
   }catch(err){
       console.log("exception: "+err)
@@ -208,9 +210,11 @@ async function externalConvert(filepath) {
                   }
                   else {
                     console.log("Completed!")
-                    notify('Markdown converted sucessfully', { body: 'Word document saved in ' + settingsObject.outputDirectory }, () => {
-                      shell.showItemInFolder(settingsObject.outputDirectory + '/' + fileName + '.docx')
-                    })
+                    nativeNotify({ title: 'Markdown converted sucessfully', body: 'Word document saved in ' + settingsObject.outputDirectory })
+                    shell.showItemInFolder(settingsObject.outputDirectory + '/' + fileName + '.docx')
+                    // notify('Markdown converted sucessfully', { body: 'Word document saved in ' + settingsObject.outputDirectory }, () => {
+                    //   shell.showItemInFolder(settingsObject.outputDirectory + '/' + fileName + '.docx')
+                    // })
                     return console.log(result), result;
                   }
                 }
@@ -232,7 +236,7 @@ async function externalConvert(filepath) {
     })
   }
   else {
-    notify('Markdown not converted', { body: path.basename(filepath) + " is not a Markdown file." })
+    nativeNotify({ title: 'Markdown not converted', body: path.basename(filepath) + ' is not a Markdown file.' })
     return false;
   }
 }
@@ -339,6 +343,9 @@ mb.on('ready', function ready () {
   mb.tray.on('drag-end', function (event) {
     mb.hideWindow();
   });
+  nativeNotify = function (payload) {
+      mb.window.webContents.send('notify',payload)
+  };
 })
 
 // Quit the app when the window is closed
@@ -361,28 +368,29 @@ app.on('will-finish-launching', ()=>{
 
 ipcMain.on('select_file', (event, target) => {
   if (target == "outputDirectory") {
-    extension = ''
+    extension = ['']
     element = '#output_directory_input'
     property = 'openDirectory'
   }
   if (target == "bibliographyFile") {
-    extension = 'bib'
+    name = '.bib, .json, and .yaml Files'
+    extension = ['bib','json','yaml']
     element = '#bibliography_file_input'
     property = 'openFile'
   }
   else if (target == "cslFile") {
-    extension = 'csl'
+    extension = ['csl']
     element = '#csl_file_input'
     property = 'openFile'
   }
   else if (target == "docxFile"){
-    extension = 'docx'
+    extension = ['docx']
     element = '#docx_file_input'
     property = 'openFile'
   }
   dialog.showOpenDialog({
     properties: [property],
-    filters: [{ name: '.' + extension + ' Files', extensions: [extension] }]
+    filters: [{ name: (name ? name : '.' + extension + ' Files'), extensions: extension }]
   }, function (file) {
       if (file !== undefined) {
         setPreference(target, file)
