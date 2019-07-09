@@ -10,15 +10,19 @@ It's ideal if you're already using Markdown and Zotero or get excited about twea
 
 DocDown is a cross-platform app, but has only been tested on macOS - chances are it won't work properly on Windows or Linux.
 
-For DocDown to work, you need to supply:
+DocDown requires:
 
-- A Zotero .json (recommended), .yaml (recommended), or .bib file (instructions to create one are in the blog post linked above)
-- A CSL file (ditto - they all live [here](https://www.zotero.org/styles))
-- A reference .docx file (an example is available from the blog post)
+- Zotero, with the [Better BibTeX plugin](https://github.com/retorquere/zotero-better-bibtex) installed
+- A Zotero .json (recommended), .yaml (recommended), or .bib file (you will need Better BibTeX to generate these; instructions to set one up are in the blog post linked above)
 
-The good news is that DocDown comes bundled with a few common CSL files and a few simple Word reference files, so you only need to supply your own .json/.yaml file.
+DocDown comes bundled with a few common CSL files and a few simple Word reference files, but you can optionally supply:
 
-You can _optionally_ supply your own, locally installed, copy of Pandoc (at least version 2.0) and pandoc-citeproc, but DocDown comes with bundled binaries of both.
+- A CSL file (refer to the blog post for help - they all live [here](https://www.zotero.org/styles))
+- Your own reference .docx file (an example is available to download from the blog post, and there are instructions there for styling your own)
+
+Even _more_ optionally, you can supply:
+
+- Your own, locally installed, copy of Pandoc (at least version 2.0) and pandoc-citeproc, but DocDown comes with bundled binaries of both.
 
 ## Installing
 
@@ -26,7 +30,7 @@ A MacOS binary is available from the [releases section in this repository](https
 
 ## Building from source
 
-Download this repository onto your computer and go into it:
+Download this repository onto your computer and switch to the resulting directory:
 
 ```
 git clone git@github.com:lowercasename/docdown.git
