@@ -1,7 +1,7 @@
 {
   "name": "docdown",
   "productName": "DocDown",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A menu bar app to convert Markdown into academia-ready Word documents",
   "main": "main.js",
   "license": "GPL-3.0-only",

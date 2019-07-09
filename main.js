@@ -390,7 +390,7 @@ ipcMain.on('select_file', (event, target) => {
   }
   dialog.showOpenDialog({
     properties: [property],
-    filters: [{ name: (name ? name : '.' + extension + ' Files'), extensions: extension }]
+    filters: [{ name: (typeof name !== "undefined" ? name : '.' + extension + ' Files'), extensions: extension }]
   }, function (file) {
       if (file !== undefined) {
         setPreference(target, file)
