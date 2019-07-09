@@ -13,7 +13,7 @@ DocDown is a cross-platform app, but has only been tested on macOS - chances are
 DocDown requires:
 
 - Zotero, with the [Better BibTeX plugin](https://github.com/retorquere/zotero-better-bibtex) installed
-- A Zotero .json (recommended), .yaml (recommended), or .bib file (you will need Better BibTeX to generate these; instructions to set one up are in the blog post linked above)
+- A Zotero Better-CSL-json (recommended), Better-CSL-yaml (recommended), or .bib file, (you will need Better BibTeX to generate these; instructions to set one up are in the blog post linked above)
 
 DocDown comes bundled with a few common CSL files and a few simple Word reference files, but you can optionally supply:
 
