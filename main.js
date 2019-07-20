@@ -131,7 +131,7 @@ async function convert(filepath) {
   try{
       console.log(pandocBinaryPath)
       console.log(citeprocBinaryPath)
-      var pandocProcess = spawn(pandocBinaryPath, ['-s','--filter',citeprocBinaryPath,'--bibliography',settingsObject.bibliographyFile,'--csl',settingsObject.cslFile,'--reference-doc',settingsObject.docxFile,'-f','markdown+smart+escaped_line_breaks','-t','docx','-o',outputFile]);
+      var pandocProcess = spawn(pandocBinaryPath, ['-s','--filter',citeprocBinaryPath,'--bibliography',settingsObject.bibliographyFile,'--csl',settingsObject.cslFile,'--reference-doc',settingsObject.docxFile,'--resource-path',path.dirname(fileName),'-f','markdown+smart+escaped_line_breaks','-t','docx','-o',outputFile]);
       pandocProcess.stdout.on('data', function(data) {
         console.log(data.toString());
       });
@@ -201,7 +201,7 @@ async function externalConvert(filepath) {
                 const outputFile = settingsObject.outputDirectory + '/' + fileName + '.docx'
 
                 // This is where the magic happens, for a given definiton of 'magic'
-                const hellScapeMcHorrorFace = ['-s','--filter','pandoc-citeproc','--bibliography',settingsObject.bibliographyFile,'--csl',settingsObject.cslFile,'--reference-doc',settingsObject.docxFile,'-f','markdown+smart+escaped_line_breaks','-t','docx','-o',outputFile];
+                const hellScapeMcHorrorFace = ['-s','--filter','pandoc-citeproc','--bibliography',settingsObject.bibliographyFile,'--csl',settingsObject.cslFile,'--reference-doc',settingsObject.docxFile,'--resource-path',path.dirname(fileName),'-f','markdown+smart+escaped_line_breaks','-t','docx','-o',outputFile];
 
                 callback = function (err, result) {
                   if (err !== null) {
