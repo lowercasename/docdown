@@ -49,7 +49,7 @@ var autoLauncher = new AutoLaunch({
 });
 
 function showIntroductionWindow(){
-  const introductionWindow = window.createWindow({ width: 550, height: 460, resizable: false, frame: false })
+  const introductionWindow = window.createWindow({ width: 550, height: 460, resizable: false, frame: false, webPreferences: {nodeIntegration: true}})
   const introductionPath = path.resolve(__dirname, 'introduction.html')
   introductionWindow.showUrl(introductionPath)
 }
@@ -250,7 +250,10 @@ var mb = menubar({
   transparent: false,
   hasShadow: true,
   resizable: false,
-  preloadWindow: true
+  preloadWindow: true,
+  webPreferences: {
+    nodeIntegration: true
+  }
 })
 
 mb.on('ready', function ready () {
@@ -324,7 +327,7 @@ mb.on('ready', function ready () {
     yPosition = yPosition+4;
   }
   mb.setOption("y",yPosition);
-  // mb.window.openDevTools({mode: 'detach'})
+  mb.window.openDevTools({mode: 'detach'})
 
   mb.tray.on('drop-files', function (event, fileArray) {
     event.preventDefault();
@@ -367,6 +370,7 @@ app.on('will-finish-launching', ()=>{
 
 
 ipcMain.on('select_file', (event, target) => {
+    console.log("DOING AN SELECT");
   if (target == "outputDirectory") {
     extension = ['']
     element = '#output_directory_input'
@@ -391,12 +395,15 @@ ipcMain.on('select_file', (event, target) => {
   dialog.showOpenDialog({
     properties: [property],
     filters: [{ name: (typeof name !== "undefined" ? name : '.' + extension + ' Files'), extensions: extension }]
-  }, function (file) {
-      if (file !== undefined) {
-        setPreference(target, file)
-        event.sender.send('preference_value', {'element': element, 'value': file})
+  })
+  .then(result => {
+      if (!result.cancelled && result.filePaths !== undefined) {
+          setPreference(target, result.filePaths[0])
+          event.sender.send('preference_value', {'element': element, 'value': result.filePaths[0]})
       }
-  });
+    }).catch(err => {
+      console.log(err)
+    })
 })
 
 ipcMain.on('change_file_source', (event, payload) => {
@@ -475,7 +482,7 @@ ipcMain.on('set_pandoc_source', (event, value) => {
 })
 
 ipcMain.on('show-preferences', () => {
-  const preferencesWindow = window.createWindow({ width: 636, height: 600, preload: true, resizable: false, frame: false })
+  const preferencesWindow = window.createWindow({ width: 636, height: 600, preload: true, resizable: false, frame: false, webPreferences: {nodeIntegration: true}})
   const preferencesPath = path.resolve(__dirname, 'preferences.html')
   const settingsObject = {
     outputDirectory: settings.get('user.outputDirectory', settings.get('defaults.outputDirectory')),
@@ -494,7 +501,6 @@ ipcMain.on('show-preferences', () => {
   }
   console.log(settingsObject);
   preferencesWindow.showUrl(preferencesPath, settingsObject)
-  // preferencesWindow.openDevTools({mode: 'detach'})
 })
 
 ipcMain.on('convert_again', () => {
