@@ -327,7 +327,7 @@ mb.on('ready', function ready () {
     yPosition = yPosition+4;
   }
   mb.setOption("y",yPosition);
-  mb.window.openDevTools({mode: 'detach'})
+  // mb.window.openDevTools({mode: 'detach'})
 
   mb.tray.on('drop-files', function (event, fileArray) {
     event.preventDefault();
