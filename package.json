@@ -1,7 +1,7 @@
 {
     "name": "docdown",
     "productName": "DocDown",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "description": "A menu bar app to convert Markdown into academia-ready Word documents",
     "main": "main.js",
     "license": "GPL-3.0-only",
@@ -19,15 +19,17 @@
         "mac": {
             "category": "public.app-category.utilities",
             "type": "distribution",
-            "fileAssociations": [{
-                "ext": [
-                    "md",
-                    "markdown",
-                    "txt"
-                ],
-                "description": "Markdown files",
-                "role": "Converter"
-            }]
+            "fileAssociations": [
+                {
+                    "ext": [
+                        "md",
+                        "markdown",
+                        "txt"
+                    ],
+                    "description": "Markdown files",
+                    "role": "Converter"
+                }
+            ]
         }
     },
     "devDependencies": {
