@@ -1,53 +1,51 @@
 {
-  "name": "docdown",
-  "productName": "DocDown",
-  "version": "0.4.0",
-  "description": "A menu bar app to convert Markdown into academia-ready Word documents",
-  "main": "main.js",
-  "license": "GPL-3.0-only",
-  "author": "Raphael Kabo",
-  "scripts": {
-    "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
-  },
-  "build": {
-    "appId": "com.raphaelkabo.docdown",
-    "asarUnpack": [
-      "assets"
-    ],
-    "mac": {
-      "category": "public.app-category.utilities",
-      "type": "distribution",
-      "fileAssociations": [
-        {
-          "ext": [
-            "md",
-            "markdown",
-            "txt"
-          ],
-          "description": "Markdown files",
-          "role": "Converter"
+    "name": "docdown",
+    "productName": "DocDown",
+    "version": "0.4.0",
+    "description": "A menu bar app to convert Markdown into academia-ready Word documents",
+    "main": "main.js",
+    "license": "GPL-3.0-only",
+    "author": "Raphael Kabo",
+    "scripts": {
+        "start": "electron .",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder"
+    },
+    "build": {
+        "appId": "com.raphaelkabo.docdown",
+        "asarUnpack": [
+            "assets"
+        ],
+        "mac": {
+            "category": "public.app-category.utilities",
+            "type": "distribution",
+            "fileAssociations": [{
+                "ext": [
+                    "md",
+                    "markdown",
+                    "txt"
+                ],
+                "description": "Markdown files",
+                "role": "Converter"
+            }]
         }
-      ]
+    },
+    "devDependencies": {
+        "electron": "^7.1.11",
+        "electron-builder": "^22.3.2"
+    },
+    "dependencies": {
+        "auto-launch": "^5.0.5",
+        "command-exists": "^1.2.8",
+        "electron-main-notification": "^1.0.1",
+        "electron-settings": "^3.2.0",
+        "electron-window": "^0.8.1",
+        "hazardous": "^0.3.0",
+        "jquery": "^3.4.1",
+        "menubar": "^5.2.3",
+        "mime-types": "^2.1.26",
+        "node-fetch": "^2.6.0",
+        "node-pandoc": "^0.3.0",
+        "semver": "^5.7.1"
     }
-  },
-  "devDependencies": {
-    "electron": "^7.1.9",
-    "electron-builder": "^21.2.0"
-  },
-  "dependencies": {
-    "auto-launch": "^5.0.5",
-    "command-exists": "^1.2.8",
-    "electron-main-notification": "^1.0.1",
-    "electron-settings": "^3.2.0",
-    "electron-window": "^0.8.1",
-    "hazardous": "^0.3.0",
-    "jquery": "^3.4.1",
-    "menubar": "^5.2.3",
-    "mime-types": "^2.1.25",
-    "node-fetch": "^2.6.0",
-    "node-pandoc": "^0.3.0",
-    "semver": "^5.7.1"
-  }
 }
