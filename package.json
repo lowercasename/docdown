@@ -43,7 +43,7 @@
         "electron-settings": "^3.2.0",
         "electron-window": "^0.8.1",
         "hazardous": "^0.3.0",
-        "jquery": "^3.4.1",
+        "jquery": "^3.5.0",
         "menubar": "^5.2.3",
         "mime-types": "^2.1.26",
         "node-fetch": "^2.6.0",
