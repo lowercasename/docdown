@@ -2,11 +2,11 @@
 
 An Electron menu bar application which takes Markdown files, filters them through a Zotero bibliography file, a CSL file, and a reference .docx file, and exports a Word document with embedded citations and styles.
 
-DocDown is essentially a wrapper for the process elaborated in [this blog post](https://raphaelkabo.com/blog/posts/markdown-to-word/).
-
 It's ideal if you're already using Markdown and Zotero or get excited about tweaking Word styles, and it's definitely overkill if you just need to convert some Markdown files into some Word files - there are much better utilities out there to do that.
 
 ## Requirements
+
+**For a detailed guide to setting up your system to work with DocDown, [head to the wiki](https://github.com/lowercasename/docdown/wiki/Initial-setup).**
 
 DocDown is a cross-platform app, but has only been tested on macOS - chances are it won't work properly on Windows or Linux.
 
@@ -26,7 +26,7 @@ Even _more_ optionally, you can supply:
 
 ## Installing
 
-A MacOS binary is available from the [releases section in this repository](https://github.com/lowercasename/docdown/releases).
+See [the wiki](https://github.com/lowercasename/docdown/wiki/Installation) for installation instructions. 
 
 ## Building from source
 
