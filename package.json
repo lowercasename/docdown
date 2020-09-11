@@ -46,7 +46,7 @@
         "jquery": "^3.5.0",
         "menubar": "^5.2.3",
         "mime-types": "^2.1.26",
-        "node-fetch": "^2.6.0",
+        "node-fetch": "^2.6.1",
         "node-pandoc": "^0.3.0",
         "semver": "^5.7.1"
     }
