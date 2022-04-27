@@ -1,9 +1,5 @@
 Pandoc is GPLv2-licensed software, provided here as a bundled binary.
 
-pandoc-citeproc is BSD-licensed software, provided here as a bundled binary.
-
-For more information on Pandoc and pandoc-citeproc, and their licenses, please visit the following sites:
+For more information on Pandoc please visit the following site:
 
 [https://github.com/jgm/pandoc](Pandoc Github repository)
-
-[https://github.com/jgm/pandoc-citeproc](pandoc-citeproc Github repository)
