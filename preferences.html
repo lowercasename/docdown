@@ -4,38 +4,43 @@
     <title>DocDown Preferences</title>
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="./vendor/css/photon.css" media="screen" charset="utf-8">
+    <link
+      rel="stylesheet"
+      href="./vendor/css/photon.css"
+      media="screen"
+      charset="utf-8"
+    />
     <!-- <link rel="stylesheet" href="./index.css" media="screen" charset="utf-8"> -->
     <style>
-    .title {
-      font-size: 14px;
-    }
-    .window-content {
-      /* background-color: #f5f5f4; */
-    }
-    button:disabled,
-    button[disabled]{
-      color: #aaa;
-    }
-    input:disabled {
-      background-color: #eee;
-      color: #aaa;
-    }
-    select {
-      width: 426px !important;
-      height: 30px;
-    }
-    select:disabled {
-      background-color: #eee;
-      color: #aaa;
-    }
-    #updatesPanel,
-    #optionsPanel,
-    #latestReleaseContainer,
-    #noNewReleaseContainer,
-    #fetchError {
-      display: none;
-    }
+      .title {
+        font-size: 14px;
+      }
+      .window-content {
+        /* background-color: #f5f5f4; */
+      }
+      button:disabled,
+      button[disabled] {
+        color: #aaa;
+      }
+      input:disabled {
+        background-color: #eee;
+        color: #aaa;
+      }
+      select {
+        width: 426px !important;
+        height: 30px;
+      }
+      select:disabled {
+        background-color: #eee;
+        color: #aaa;
+      }
+      #updatesPanel,
+      #optionsPanel,
+      #latestReleaseContainer,
+      #noNewReleaseContainer,
+      #fetchError {
+        display: none;
+      }
     </style>
 
     <!-- Electron Javascript -->
@@ -52,389 +57,704 @@
           <div class="pane-sm sidebar">
             <ul class="list-group" id="sidebarList">
               <li class="list-group-item active" id="fileLocationsPanelToggle">
-                <div class="media-body" style="display:flex;align-items: center;">
-                  <span class="icon icon-doc-text" style="font-size:22px;margin-right:10px;"></span>
-                  <p style="font-size:16px;">File locations</p>
+                <div
+                  class="media-body"
+                  style="display: flex; align-items: center"
+                >
+                  <span
+                    class="icon icon-doc-text"
+                    style="font-size: 22px; margin-right: 10px"
+                  ></span>
+                  <p style="font-size: 16px">File locations</p>
                 </div>
               </li>
               <li class="list-group-item" id="optionsPanelToggle">
-                <div class="media-body" style="display:flex;align-items: center;">
-                  <span class="icon icon-tools" style="font-size:22px;margin-right:10px;"></span>
-                  <p style="font-size:16px;">Other options</p>
+                <div
+                  class="media-body"
+                  style="display: flex; align-items: center"
+                >
+                  <span
+                    class="icon icon-tools"
+                    style="font-size: 22px; margin-right: 10px"
+                  ></span>
+                  <p style="font-size: 16px">Other options</p>
                 </div>
               </li>
               <li class="list-group-item" id="updatesPanelToggle">
-                <div class="media-body" style="display:flex;align-items: center;">
-                  <span class="icon icon-arrows-ccw" style="font-size:22px;margin-right:10px;"></span>
-                  <p style="font-size:16px;">Updates</p>
+                <div
+                  class="media-body"
+                  style="display: flex; align-items: center"
+                >
+                  <span
+                    class="icon icon-arrows-ccw"
+                    style="font-size: 22px; margin-right: 10px"
+                  ></span>
+                  <p style="font-size: 16px">Updates</p>
                 </div>
               </li>
             </ul>
           </div>
-          <div id="panelsContainer" class="pane padded-more" style="display: flex;flex-direction: column;justify-content: space-between;">
+          <div
+            id="panelsContainer"
+            class="pane padded-more"
+            style="
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+            "
+          >
             <div class="panel" id="fileLocationsPanel">
               <form>
                 <div class="form-group">
                   <label>Folder to save exported files</label>
-                  <input type="input" id="output_directory_input" class="form-control" style="width: 82%;" placeholder="Select a folder" readonly>
-                  <button type="button" id="output_directory_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+                  <input
+                    type="input"
+                    id="output_directory_input"
+                    class="form-control"
+                    style="width: 82%"
+                    placeholder="Select a folder"
+                    readonly
+                  />
+                  <button
+                    type="button"
+                    id="output_directory_button"
+                    class="btn btn-large btn-default"
+                    style="float: right"
+                  >
+                    Choose
+                  </button>
                 </div>
                 <hr />
                 <div class="form-group">
-                  <label>Location of Zotero bibliography file (.json, .yaml, or .bib)</label>
-                  <input type="input" id="bibliography_file_input" class="form-control" style="width: 82%;" placeholder="Select a .json, .yaml, or .bib file" readonly>
-                  <button type="button" id="bibliography_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+                  <label
+                    >Location of Zotero bibliography file (.json, .yaml, or
+                    .bib)</label
+                  >
+                  <input
+                    type="input"
+                    id="bibliography_file_input"
+                    class="form-control"
+                    style="width: 82%"
+                    placeholder="Select a .json, .yaml, or .bib file"
+                    readonly
+                  />
+                  <button
+                    type="button"
+                    id="bibliography_file_button"
+                    class="btn btn-large btn-default"
+                    style="float: right"
+                  >
+                    Choose
+                  </button>
                 </div>
                 <hr />
                 <div class="radio">
                   <label>
-                    <input type="radio" name="csl_radios" id="csl_radio_internal">
+                    <input
+                      type="radio"
+                      name="csl_radios"
+                      id="csl_radio_internal"
+                    />
                     Use an included CSL file
                   </label>
-                  <select class="form-control" id="internal_csl_selector" style="margin-left:20px;">
+                  <select
+                    class="form-control"
+                    id="internal_csl_selector"
+                    style="margin-left: 20px"
+                  >
                     <option value="none">Select a citation style</option>
-                    <option value="apa">American Psychological Association 6th edition</option>
-                    <option value="chicago-ad">Chicago Manual of Style 17th edition (Author-Date)</option>
-                    <option value="chicago-note">Chicago Manual of Style 17th edition (Note)</option>
-                    <option value="mhra-ad">Modern Humanities Research Association 3rd edition (Author-Date)</option>
-                    <option value="mhra-note">Modern Humanities Research Association 3rd edition (Note)</option>
-                    <option value="mla">Modern Language Association 8th edition</option>
+                    <option value="apa">
+                      American Psychological Association 6th edition
+                    </option>
+                    <option value="chicago-ad">
+                      Chicago Manual of Style 17th edition (Author-Date)
+                    </option>
+                    <option value="chicago-note">
+                      Chicago Manual of Style 17th edition (Note)
+                    </option>
+                    <option value="mhra-ad">
+                      Modern Humanities Research Association 3rd edition
+                      (Author-Date)
+                    </option>
+                    <option value="mhra-note">
+                      Modern Humanities Research Association 3rd edition (Note)
+                    </option>
+                    <option value="mla">
+                      Modern Language Association 8th edition
+                    </option>
                   </select>
                 </div>
                 <div class="radio">
                   <label>
-                    <input type="radio" name="csl_radios" id="csl_radio_external">
+                    <input
+                      type="radio"
+                      name="csl_radios"
+                      id="csl_radio_external"
+                    />
                     Choose a custom CSL file
                   </label>
-                  <div class="form-group" style="margin-left:20px;">
-                    <input type="input" id="csl_file_input" class="form-control" style="width: 82%;" placeholder="Select a .csl file" readonly>
-                    <button type="button" id="csl_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+                  <div class="form-group" style="margin-left: 20px">
+                    <input
+                      type="input"
+                      id="csl_file_input"
+                      class="form-control"
+                      style="width: 82%"
+                      placeholder="Select a .csl file"
+                      readonly
+                    />
+                    <button
+                      type="button"
+                      id="csl_file_button"
+                      class="btn btn-large btn-default"
+                      style="float: right"
+                    >
+                      Choose
+                    </button>
                   </div>
                 </div>
                 <hr />
                 <div class="radio">
                   <label>
-                    <input type="radio" name="docx_radios" id="docx_radio_internal">
+                    <input
+                      type="radio"
+                      name="docx_radios"
+                      id="docx_radio_internal"
+                    />
                     Use an included Word style reference file
                   </label>
-                  <select class="form-control" id="internal_docx_selector" style="margin-left:20px;">
+                  <select
+                    class="form-control"
+                    id="internal_docx_selector"
+                    style="margin-left: 20px"
+                  >
                     <option value="none">Select a style</option>
-                    <option value="pandoc">Pandoc default (Calibri/Cambria)</option>
-                    <option value="paperback">Paperback (Futura/Garamond)</option>
+                    <option value="pandoc">
+                      Pandoc default (Calibri/Cambria)
+                    </option>
+                    <option value="paperback">
+                      Paperback (Futura/Garamond)
+                    </option>
                     <option value="computer">Computer (CMU Serif)</option>
                     <option value="report">Report (Times New Roman)</option>
                   </select>
                 </div>
                 <div class="radio">
                   <label>
-                    <input type="radio" name="docx_radios" id="docx_radio_external">
+                    <input
+                      type="radio"
+                      name="docx_radios"
+                      id="docx_radio_external"
+                    />
                     Choose a custom Word style reference file
                   </label>
-                  <div class="form-group" style="margin-left:20px;">
-                    <input type="input" id="docx_file_input" class="form-control" style="width: 82%;" placeholder="Select a .docx file" readonly>
-                    <button type="button" id="docx_file_button" class="btn btn-large btn-default" style="float: right;">Choose</button>
+                  <div class="form-group" style="margin-left: 20px">
+                    <input
+                      type="input"
+                      id="docx_file_input"
+                      class="form-control"
+                      style="width: 82%"
+                      placeholder="Select a .docx file"
+                      readonly
+                    />
+                    <button
+                      type="button"
+                      id="docx_file_button"
+                      class="btn btn-large btn-default"
+                      style="float: right"
+                    >
+                      Choose
+                    </button>
                   </div>
                 </div>
               </form>
             </div>
             <div class="panel" id="optionsPanel">
-              <div class="checkbox" style="margin-top:0px;">
+              <div class="checkbox" style="margin-top: 0px">
                 <label>
-                  <input type="checkbox" id="open_on_startup"> Open DocDown on startup
+                  <input type="checkbox" id="open_on_startup" /> Open DocDown on
+                  startup
                 </label>
               </div>
-              <div class="checkbox" style="margin-top:0px;">
+              <div class="checkbox" style="margin-top: 0px">
                 <label>
-                  <input type="checkbox" id="auto_update_check"> Check for updates automatically
+                  <input type="checkbox" id="auto_update_check" /> Check for
+                  updates automatically
                 </label>
               </div>
               <hr />
               <h5>Advanced settings</h5>
               <p>
-                If you're not sure what these settings do, it's best to leave them as they are.
+                If you're not sure what these settings do, it's best to leave
+                them as they are.
               </p>
-              <div class="checkbox" style="margin-top:0px;">
+              <div class="checkbox" style="margin-top: 0px">
                 <label>
-                  <input type="checkbox" id="use_bundled_pandoc"> Use bundled Pandoc and pandoc-citeproc
-                </label><br />
-                <span style="color:#aaa;">If this option is disabled, DocDown will attempt to use a globally installed instance of Pandoc and pandoc-citeproc.</span>
+                  <input type="checkbox" id="use_bundled_pandoc" /> Use bundled
+                  Pandoc </label
+                ><br />
+                <span style="color: #aaa"
+                  >If this option is disabled, DocDown will attempt to use a
+                  globally installed instance of Pandoc.</span
+                >
               </div>
-              <!-- <div class="form-group">
+              <hr />
+              <div class="form-group">
+                <label>Markdown processor</label>
+                <select class="form-control" id="markdown_processor">
+                  <option value="markdown">Pandoc's Markdown</option>
+                  <option value="markdown_mmd">MultiMarkdown</option>
+                  <option value="markdown_phpextra">PHP Markdown Extra</option>
+                  <option value="markdown_strict">Original Markdown</option>
+                  <option value="gfm">GitHub-Flavored Markdown</option>
+                  <option value="commonmark">CommonMark</option>
+                  <option value="commonmark_x">
+                    CommonMark with extensions
+                  </option>
+                </select>
+              </div>
+              <hr />
+              <div class="form-group">
                 <label>Additional Pandoc extensions</label>
-                <p>
-                  DocDown uses +smart+escaped_line_breaks by default. The contents of this field will be passed directly to the Pandoc conversion command.
+                <input
+                  type="input"
+                  id="pandoc_extensions"
+                  class="form-control"
+                  placeholder="Example: +smart+escaped_line_breaks"
+                />
+                <p style="color: #aaa">
+                  DocDown uses <strong>+smart+escaped_line_breaks</strong> by
+                  default. The contents of this field will be passed directly to
+                  the Pandoc conversion command.
                 </p>
-                <input type="input" id="pandoc_extensions" class="form-control" placeholder="+smart+escaped_line_breaks">
-              </div> -->
+              </div>
             </div>
             <div class="panel" id="updatesPanel">
-              <p style="margin-top:0;">
-                You are using DocDown version <strong id="currentRelease"></strong>.
+              <p style="margin-top: 0">
+                You are using DocDown version
+                <strong id="currentRelease"></strong>.
               </p>
               <div id="latestReleaseContainer">
                 <p>
-                  A new version of DocDown (<strong id="latestRelease"></strong>) is available! 🙌
+                  A new version of DocDown (<strong id="latestRelease"></strong
+                  >) is available! 🙌
                 </p>
-                <div id="updateInformation" style="font-size:smaller;border:1px solid #ccc;border-radius:4px;width: 100%;padding:5px;margin:10px 0;">
-                </div>
+                <div
+                  id="updateInformation"
+                  style="
+                    font-size: smaller;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    width: 100%;
+                    padding: 5px;
+                    margin: 10px 0;
+                  "
+                ></div>
                 <p>
-                  Please update now by <a id="external_link" href="https://github.com/lowercasename/docdown">clicking here</a>, downloading the latest release for your platform, and replacing the current version with the new release.
+                  Please update now by
+                  <a
+                    id="external_link"
+                    href="https://github.com/lowercasename/docdown"
+                    >clicking here</a
+                  >, downloading the latest release for your platform, and
+                  replacing the current version with the new release.
                 </p>
               </div>
-              <p id="noNewReleaseContainer">
-                You're up to date! 🎉
-              </p>
+              <p id="noNewReleaseContainer">You're up to date! 🎉</p>
               <p id="fetchError">
-                <span class="icon icon-attention"></span> DocDown is having trouble connecting to the update server. Please check your network settings and try again later.
+                <span class="icon icon-attention"></span> DocDown is having
+                trouble connecting to the update server. Please check your
+                network settings and try again later.
               </p>
-              <button class="btn btn-large btn-positive" id="checkForNewReleaseButton">Check for updates</button>
+              <button
+                class="btn btn-large btn-positive"
+                id="checkForNewReleaseButton"
+              >
+                Check for updates
+              </button>
             </div>
             <div id="footer">
-              <button class="btn btn-large btn-primary pull-right" id="closeButton">Close</button>
+              <button
+                class="btn btn-large btn-primary pull-right"
+                id="closeButton"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </body>
-  <script>window.$ = window.jQuery = require('jquery');</script>
   <script>
-    const { ipcRenderer, shell } = require('electron');
-    const remote = require('electron').remote;
-    require('electron-window').parseArgs()
-    preferencesObject = window.__args__
-    console.log(preferencesObject)
-    $(document).ready(function() {
-
+    window.$ = window.jQuery = require("jquery");
+  </script>
+  <script>
+    const { ipcRenderer, shell } = require("electron");
+    const remote = require("electron").remote;
+    require("electron-window").parseArgs();
+    preferencesObject = window.__args__;
+    console.log(preferencesObject);
+    $(document).ready(function () {
       // Whitelist for Pandoc extensions input field to prevent command injection
-
-      // $.fn.whitelist = function(chars){
-      //     var $this = $(this), chars = chars.split('');
-      //     $this.keypress(function(e){
-      //       if (chars.indexOf(String.fromCharCode(e.which)) == -1){ return false; }});
-      //     return $this;
-      // };
-
-      // $("#pandoc_extensions").whitelist("abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_+-");
+      $.fn.whitelist = function (chars) {
+        var $this = $(this),
+          chars = chars.split("");
+        $this.keypress(function (e) {
+          if (chars.indexOf(String.fromCharCode(e.which)) == -1) {
+            return false;
+          }
+        });
+        return $this;
+      };
+      $("#pandoc_extensions").whitelist(
+        "abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_+-"
+      );
 
       $("#output_directory_input").val(preferencesObject.outputDirectory);
       $("#bibliography_file_input").val(preferencesObject.bibliographyFile);
-      $("#csl_file_input").val(preferencesObject.cslSource == "internal" ? "" : preferencesObject.cslFile);
-      $("#docx_file_input").val(preferencesObject.docxSource == "internal" ? "" : preferencesObject.docxFile);
-      $("#open_on_startup").prop('checked', preferencesObject.autoLaunch);
-      $("#auto_update_check").prop('checked', preferencesObject.autoUpdateCheck);
-      $("#use_bundled_pandoc").prop('checked', preferencesObject.useBundledPandoc);
-      // $("#pandoc_extensions").val(preferencesObject.pandocExtensions);
-      $("#csl_radio_internal").prop('checked', preferencesObject.cslSource == "internal" ? true : false);
-      $("#csl_radio_external").prop('checked', preferencesObject.cslSource == "external" ? true : false);
-      $("#docx_radio_internal").prop('checked', preferencesObject.docxSource == "internal" ? true : false);
-      $("#docx_radio_external").prop('checked', preferencesObject.docxSource == "external" ? true : false);
-      $("#internal_csl_selector").val(preferencesObject.cslSource == "internal" ? preferencesObject.cslInternalVal : "none")
-      $("#internal_docx_selector").val(preferencesObject.docxSource == "internal" ? preferencesObject.docxInternalVal : "none")
+      $("#csl_file_input").val(
+        preferencesObject.cslSource == "internal"
+          ? ""
+          : preferencesObject.cslFile
+      );
+      $("#docx_file_input").val(
+        preferencesObject.docxSource == "internal"
+          ? ""
+          : preferencesObject.docxFile
+      );
+      $("#open_on_startup").prop("checked", preferencesObject.autoLaunch);
+      $("#auto_update_check").prop(
+        "checked",
+        preferencesObject.autoUpdateCheck
+      );
+      $("#use_bundled_pandoc").prop(
+        "checked",
+        preferencesObject.useBundledPandoc
+      );
+      $("#pandoc_extensions").val(preferencesObject.pandocExtensions);
+      $("#csl_radio_internal").prop(
+        "checked",
+        preferencesObject.cslSource == "internal" ? true : false
+      );
+      $("#csl_radio_external").prop(
+        "checked",
+        preferencesObject.cslSource == "external" ? true : false
+      );
+      $("#docx_radio_internal").prop(
+        "checked",
+        preferencesObject.docxSource == "internal" ? true : false
+      );
+      $("#docx_radio_external").prop(
+        "checked",
+        preferencesObject.docxSource == "external" ? true : false
+      );
+      $("#internal_csl_selector").val(
+        preferencesObject.cslSource == "internal"
+          ? preferencesObject.cslInternalVal
+          : "none"
+      );
+      $("#internal_docx_selector").val(
+        preferencesObject.docxSource == "internal"
+          ? preferencesObject.docxInternalVal
+          : "none"
+      );
       $("#currentRelease").html(preferencesObject.currentRelease);
-      if ($("#csl_radio_internal").is(":checked")){
+      $("#markdown_processor").val(preferencesObject.markdownProcessor);
+      if ($("#csl_radio_internal").is(":checked")) {
         console.log("CSL internal checked!");
-        $("#csl_file_input").prop("disabled",true);
-        $("#csl_file_button").prop("disabled",true);
-      }
-      else {
+        $("#csl_file_input").prop("disabled", true);
+        $("#csl_file_button").prop("disabled", true);
+      } else {
         console.log("CSL external checked!");
-        $("#internal_csl_selector").prop("disabled",true);
+        $("#internal_csl_selector").prop("disabled", true);
       }
-      if ($("#docx_radio_internal").is(":checked")){
+      if ($("#docx_radio_internal").is(":checked")) {
         console.log("DOCX internal checked!");
-        $("#docx_file_input").prop("disabled",true);
-        $("#docx_file_button").prop("disabled",true);
-      }
-      else {
+        $("#docx_file_input").prop("disabled", true);
+        $("#docx_file_button").prop("disabled", true);
+      } else {
         console.log("DOCX external checked!");
-        $("#internal_docx_selector").prop("disabled",true);
+        $("#internal_docx_selector").prop("disabled", true);
       }
-    })
-    $("#fileLocationsPanelToggle").click(function(){
-      if($("#fileLocationsPanel").is(":hidden")){
-        $("#sidebarList>li").removeClass("active")
-        $(this).addClass("active")
+    });
+    $("#fileLocationsPanelToggle").click(function () {
+      if ($("#fileLocationsPanel").is(":hidden")) {
+        $("#sidebarList>li").removeClass("active");
+        $(this).addClass("active");
         $(".panel").hide();
         $("#fileLocationsPanel").show();
       }
-    })
-    $("#optionsPanelToggle").click(function(){
-      if($("#optionsPanel").is(":hidden")){
-        $("#sidebarList>li").removeClass("active")
-        $(this).addClass("active")
+    });
+    $("#optionsPanelToggle").click(function () {
+      if ($("#optionsPanel").is(":hidden")) {
+        $("#sidebarList>li").removeClass("active");
+        $(this).addClass("active");
         $(".panel").hide();
         $("#optionsPanel").show();
       }
-    })
-    $("#updatesPanelToggle").click(function(){
-      if($("#updatesPanel").is(":hidden")){
-        $("#sidebarList>li").removeClass("active")
-        $(this).addClass("active")
+    });
+    $("#updatesPanelToggle").click(function () {
+      if ($("#updatesPanel").is(":hidden")) {
+        $("#sidebarList>li").removeClass("active");
+        $(this).addClass("active");
         $(".panel").hide();
         $("#updatesPanel").show();
       }
-    })
-    $("#checkForNewReleaseButton").click(function(){
-      $(this).html('<span class="icon icon-arrows-ccw" style="color:#fff;padding-right:5px;"></span> Checking...').removeClass("btn-positive").addClass("btn-warning")
+    });
+    $("#checkForNewReleaseButton").click(function () {
+      $(this)
+        .html(
+          '<span class="icon icon-arrows-ccw" style="color:#fff;padding-right:5px;"></span> Checking...'
+        )
+        .removeClass("btn-positive")
+        .addClass("btn-warning");
       function checkForNewRelease() {
-        return new Promise(resolve => {
-          ipcRenderer.send('checkForNewRelease')
-          ipcRenderer.on('update_notification', (event, result) => {
+        return new Promise((resolve) => {
+          ipcRenderer.send("checkForNewRelease");
+          ipcRenderer.on("update_notification", (event, result) => {
             resolve(result);
-            $("#checkForNewReleaseButton").html('Check for updates').removeClass("btn-warning").addClass("btn-positive")
-            if (result.updateAvailable === true){
-              let releaseDate = new Date(result.releaseDate).toLocaleDateString('en-GB', {
-              	day : 'numeric',
-              	month : 'short',
-              	year : 'numeric'
-              })
-              $("#latestRelease").html(result.latestRelease + ", released " + releaseDate)
-              $("#updateInformation").html(result.releaseInformation.replace(/\n/g, '<br />'))
-              $("#latestReleaseContainer").show()
-              $("#noNewReleaseContainer").hide()
-              $("#fetchError").hide()
+            $("#checkForNewReleaseButton")
+              .html("Check for updates")
+              .removeClass("btn-warning")
+              .addClass("btn-positive");
+            if (result.updateAvailable === true) {
+              let releaseDate = new Date(result.releaseDate).toLocaleDateString(
+                "en-GB",
+                {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }
+              );
+              $("#latestRelease").html(
+                result.latestRelease + ", released " + releaseDate
+              );
+              $("#updateInformation").html(
+                result.releaseInformation.replace(/\n/g, "<br />")
+              );
+              $("#latestReleaseContainer").show();
+              $("#noNewReleaseContainer").hide();
+              $("#fetchError").hide();
+            } else if (result.fetchError === true) {
+              $("#fetchError").show();
+              $("#latestReleaseContainer").hide();
+              $("#noNewReleaseContainer").hide();
+            } else {
+              $("#noNewReleaseContainer").show();
+              $("#latestReleaseContainer").hide();
+              $("#fetchError").hide();
             }
-            else if (result.fetchError === true) {
-              $("#fetchError").show()
-              $("#latestReleaseContainer").hide()
-              $("#noNewReleaseContainer").hide()
-            }
-            else {
-              $("#noNewReleaseContainer").show()
-              $("#latestReleaseContainer").hide()
-              $("#fetchError").hide()
-            }
-          })
+          });
         });
       }
-      checkForNewRelease()
-    })
-    $("#closeButton").click(function(){
+      checkForNewRelease();
+    });
+    $("#closeButton").click(function () {
       var window = remote.getCurrentWindow();
       window.close();
-    })
-    $("#external_link").click(function(e){
+    });
+    $("#external_link").click(function (e) {
       e.preventDefault();
-      shell.openExternal('https://github.com/lowercasename/docdown/releases/latest')
-    })
-    ipcRenderer.on('preference_value', (event, payload) => {
+      shell.openExternal(
+        "https://github.com/lowercasename/docdown/releases/latest"
+      );
+    });
+    ipcRenderer.on("preference_value", (event, payload) => {
       $(payload.element).val(payload.value);
-    })
-    $("#output_directory_button").click(function(){
-      ipcRenderer.send('select_file', 'outputDirectory')
-    })
-    $("#bibliography_file_button").click(function(){
-      ipcRenderer.send('select_file', 'bibliographyFile')
-    })
-    $("#csl_file_button").click(function(){
-      ipcRenderer.send('select_file', 'cslFile')
-    })
-    $("#docx_file_button").click(function(){
-      ipcRenderer.send('select_file', 'docxFile')
-    })
-    $('#open_on_startup').change(function() {
-      if(this.checked) {
-        ipcRenderer.send('set_auto_launch', true)
+    });
+    $("#output_directory_button").click(function () {
+      ipcRenderer.send("select_file", "outputDirectory");
+    });
+    $("#bibliography_file_button").click(function () {
+      ipcRenderer.send("select_file", "bibliographyFile");
+    });
+    $("#csl_file_button").click(function () {
+      ipcRenderer.send("select_file", "cslFile");
+    });
+    $("#docx_file_button").click(function () {
+      ipcRenderer.send("select_file", "docxFile");
+    });
+    $("#open_on_startup").change(function () {
+      if (this.checked) {
+        ipcRenderer.send("set_auto_launch", true);
         return;
       }
-      ipcRenderer.send('set_auto_launch', false)
+      ipcRenderer.send("set_auto_launch", false);
     });
-    $('#auto_update_check').change(function() {
-      if(this.checked) {
-        ipcRenderer.send('set_auto_update_check', true)
+    $("#auto_update_check").change(function () {
+      if (this.checked) {
+        ipcRenderer.send("set_auto_update_check", true);
         return;
       }
-      ipcRenderer.send('set_auto_update_check', false)
+      ipcRenderer.send("set_auto_update_check", false);
     });
-    $('#use_bundled_pandoc').change(function() {
-      if(this.checked) {
-        ipcRenderer.send('set_pandoc_source', true)
+    $("#use_bundled_pandoc").change(function () {
+      if (this.checked) {
+        ipcRenderer.send("set_pandoc_source", true);
         return;
       }
-      ipcRenderer.send('set_pandoc_source', false)
+      ipcRenderer.send("set_pandoc_source", false);
     });
-    $( 'input[name="csl_radios"]:radio' ).change(function() {
+    $('input[name="csl_radios"]:radio').change(function () {
       console.log("CSL radio clicked!");
-      if ($("#csl_radio_internal").is(":checked")){
+      if ($("#csl_radio_internal").is(":checked")) {
         console.log("CSL internal checked!");
-        $("#internal_csl_selector").prop("disabled",false);
-        $("#csl_file_input").prop("disabled",true).val("");
-        $("#csl_file_button").prop("disabled",true);
-        ipcRenderer.send('change_file_source', {file: 'csl', value: 'internal'})
-        ipcRenderer.send('clear_external_file', 'cslFile')
-      }
-      else {
+        $("#internal_csl_selector").prop("disabled", false);
+        $("#csl_file_input").prop("disabled", true).val("");
+        $("#csl_file_button").prop("disabled", true);
+        ipcRenderer.send("change_file_source", {
+          file: "csl",
+          value: "internal",
+        });
+        ipcRenderer.send("clear_external_file", "cslFile");
+      } else {
         console.log("CSL external checked!");
-        $("#internal_csl_selector").prop("disabled",true).val("none");
-        $("#csl_file_input").prop("disabled",false);
-        $("#csl_file_button").prop("disabled",false);
-        ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '', internalVal: 'none'})
-        ipcRenderer.send('change_file_source', {file: 'csl', value: 'external'})
+        $("#internal_csl_selector").prop("disabled", true).val("none");
+        $("#csl_file_input").prop("disabled", false);
+        $("#csl_file_button").prop("disabled", false);
+        ipcRenderer.send("choose_internal_file", {
+          preference: "csl",
+          value: "",
+          internalVal: "none",
+        });
+        ipcRenderer.send("change_file_source", {
+          file: "csl",
+          value: "external",
+        });
       }
-    })
-    $( 'input[name="docx_radios"]:radio' ).change(function() {
+    });
+    $('input[name="docx_radios"]:radio').change(function () {
       console.log("DOCX radio clicked!");
-      if ($("#docx_radio_internal").is(":checked")){
+      if ($("#docx_radio_internal").is(":checked")) {
         console.log("DOCX internal checked!");
-        $("#internal_docx_selector").prop("disabled",false);
-        $("#docx_file_input").prop("disabled",true).val("");
-        $("#docx_file_button").prop("disabled",true);
-        ipcRenderer.send('change_file_source', {file: 'docx', value: 'internal'})
-        ipcRenderer.send('clear_external_file', 'docxFile')
-      }
-      else {
+        $("#internal_docx_selector").prop("disabled", false);
+        $("#docx_file_input").prop("disabled", true).val("");
+        $("#docx_file_button").prop("disabled", true);
+        ipcRenderer.send("change_file_source", {
+          file: "docx",
+          value: "internal",
+        });
+        ipcRenderer.send("clear_external_file", "docxFile");
+      } else {
         console.log("DOCX external checked!");
-        $("#internal_docx_selector").prop("disabled",true).val("none");
-        $("#docx_file_input").prop("disabled",false);
-        $("#docx_file_button").prop("disabled",false);
-        ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '', internalVal: 'none'})
-        ipcRenderer.send('change_file_source', {file: 'docx', value: 'external'})
+        $("#internal_docx_selector").prop("disabled", true).val("none");
+        $("#docx_file_input").prop("disabled", false);
+        $("#docx_file_button").prop("disabled", false);
+        ipcRenderer.send("choose_internal_file", {
+          preference: "docx",
+          value: "",
+          internalVal: "none",
+        });
+        ipcRenderer.send("change_file_source", {
+          file: "docx",
+          value: "external",
+        });
       }
-    })
-    $("#internal_csl_selector").change(function() {
-      switch ($(this).val()){
+    });
+    $("#internal_csl_selector").change(function () {
+      switch ($(this).val()) {
         case "apa":
-          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/apa.csl', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "csl",
+            value: "/csl/apa.csl",
+            internalVal: $(this).val(),
+          });
           break;
         case "chicago-ad":
-          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/chicago-author-date.csl', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "csl",
+            value: "/csl/chicago-author-date.csl",
+            internalVal: $(this).val(),
+          });
           break;
         case "chicago-note":
-          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/chicago-note-bibliography.csl', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "csl",
+            value: "/csl/chicago-note-bibliography.csl",
+            internalVal: $(this).val(),
+          });
           break;
         case "mhra-ad":
-          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/modern-humanities-research-association-author-date.csl', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "csl",
+            value:
+              "/csl/modern-humanities-research-association-author-date.csl",
+            internalVal: $(this).val(),
+          });
           break;
         case "mhra-note":
-          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/modern-humanities-research-association.csl', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "csl",
+            value: "/csl/modern-humanities-research-association.csl",
+            internalVal: $(this).val(),
+          });
           break;
         case "mla":
-          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '/csl/modern-language-association.csl', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "csl",
+            value: "/csl/modern-language-association.csl",
+            internalVal: $(this).val(),
+          });
           break;
         case "none":
-          ipcRenderer.send('choose_internal_file', {preference: 'csl', value: '', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "csl",
+            value: "",
+            internalVal: $(this).val(),
+          });
           break;
       }
     });
-    $("#internal_docx_selector").change(function() {
-      switch ($(this).val()){
+    $("#internal_docx_selector").change(function () {
+      switch ($(this).val()) {
         case "pandoc":
-          ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '/docx/pandoc-default-reference.docx', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "docx",
+            value: "/docx/pandoc-default-reference.docx",
+            internalVal: $(this).val(),
+          });
           break;
         case "paperback":
-          ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '/docx/paperback-reference.docx', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "docx",
+            value: "/docx/paperback-reference.docx",
+            internalVal: $(this).val(),
+          });
           break;
         case "computer":
-          ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '/docx/computer-reference.docx', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "docx",
+            value: "/docx/computer-reference.docx",
+            internalVal: $(this).val(),
+          });
           break;
         case "report":
-          ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '/docx/report-reference.docx', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "docx",
+            value: "/docx/report-reference.docx",
+            internalVal: $(this).val(),
+          });
           break;
         case "none":
-          ipcRenderer.send('choose_internal_file', {preference: 'docx', value: '', internalVal: $(this).val()})
+          ipcRenderer.send("choose_internal_file", {
+            preference: "docx",
+            value: "",
+            internalVal: $(this).val(),
+          });
           break;
       }
+    });
+    $("#markdown_processor").change(function () {
+      ipcRenderer.send("choose_markdown_processor", {
+        preference: "markdownProcessor",
+        value: $(this).val(),
+      });
+    });
+    $("#pandoc_extensions").keyup(function () {
+      ipcRenderer.send("choose_pandoc_extensions", {
+        preference: "pandocExtensions",
+        value: $(this).val(),
+      });
     });
   </script>
 </html>
