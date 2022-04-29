@@ -22,7 +22,7 @@ DocDown comes bundled with a few common CSL files and a few simple Word referenc
 
 Even _more_ optionally, you can supply:
 
-- Your own, locally installed, copy of Pandoc (at least version 2.18) and pandoc-citeproc, but DocDown comes with bundled binaries of both.
+- Your own, locally installed, copy of Pandoc (at least version 2.18), but DocDown comes with a bundled Pandoc binary.
 
 ## Installing
 
