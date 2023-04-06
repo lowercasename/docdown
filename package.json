@@ -13,13 +13,19 @@
     },
     "build": {
         "appId": "com.raphaelkabo.docdown",
-        "asarUnpack": ["assets"],
+        "asarUnpack": [
+            "assets"
+        ],
         "mac": {
             "category": "public.app-category.utilities",
             "type": "distribution",
             "fileAssociations": [
                 {
-                    "ext": ["md", "markdown", "txt"],
+                    "ext": [
+                        "md",
+                        "markdown",
+                        "txt"
+                    ],
                     "description": "Markdown files",
                     "role": "Converter"
                 }
@@ -27,7 +33,7 @@
         }
     },
     "devDependencies": {
-        "electron": "^7.1.11",
+        "electron": "18.3.7",
         "electron-builder": "^22.3.2"
     },
     "dependencies": {

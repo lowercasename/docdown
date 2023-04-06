@@ -413,6 +413,8 @@ var mb = menubar({
   preloadWindow: true,
   webPreferences: {
     nodeIntegration: true,
+    contextIsolation: false,
+    enableRemoteModule: true,
   },
 });
 
@@ -694,7 +696,11 @@ ipcMain.on("show-preferences", () => {
     preload: true,
     resizable: false,
     frame: false,
-    webPreferences: { nodeIntegration: true },
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
+    },
   });
   const preferencesPath = path.resolve(__dirname, "preferences.html");
   const settingsObject = {
