@@ -407,7 +407,7 @@
         return $this;
       };
       $("#pandoc_extensions").whitelist(
-        "abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_+-"
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_+-"
       );
 
       $("#output_directory_input").val(preferencesObject.outputDirectory);
@@ -550,7 +550,6 @@
       checkForNewRelease();
     });
     $("#closeButton").click(function () {
-      var window = remote.getCurrentWindow();
       window.close();
     });
     $("#external_link").click(function (e) {

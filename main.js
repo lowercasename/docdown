@@ -682,7 +682,7 @@ ipcMain.on("choose_pandoc_extensions", (event, payload) => {
     setPreference(payload.preference, "");
   } else {
     const whitelistedString = removeChars(
-      "abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_+-",
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_+-",
       payload.value.trim()
     );
     setPreference(payload.preference, whitelistedString);
