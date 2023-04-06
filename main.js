@@ -158,6 +158,15 @@ async function convert(filepath) {
   console.log("It's a Markdown file!");
   console.log(filepath);
   const settingsObject = {
+    mode: settings.get("user.mode", settings.get("defaults.mode")),
+    outputFormat: settings.get(
+      "user.outputFormat",
+      settings.get("defaults.outputFormat")
+    ),
+    liveCitationsModeCitationFormat: settings.get(
+      "user.liveCitationsModeCitationFormat",
+      settings.get("defaults.liveCitationsModeCitationFormat")
+    ),
     outputDirectory: settings.get(
       "user.outputDirectory",
       settings.get("defaults.outputDirectory")
@@ -178,11 +187,14 @@ async function convert(filepath) {
     ),
   };
   if (
-    settingsObject.outputDirectory === "" ||
-    settingsObject.bibliographyFile === "" ||
-    settingsObject.cslFile === "" ||
-    settingsObject.docxFile === "" ||
-    settingsObject.markdownProcessor === ""
+    settingsObject.mode === "plainText" &&
+    (
+      settingsObject.outputDirectory === "" ||
+      settingsObject.bibliographyFile === "" ||
+      settingsObject.cslFile === "" ||
+      settingsObject.docxFile === "" ||
+      settingsObject.markdownProcessor === ""
+    )
   ) {
     dialog.showMessageBox({
       type: "warning",
@@ -194,29 +206,40 @@ async function convert(filepath) {
   // Prepare the input file and set the output directory
   const fileName = path.basename(filepath, path.extname(filepath));
   const rawMarkdown = fs.readFileSync(filepath) + "\n\n# Bibliography";
-  const outputFile = settingsObject.outputDirectory + "/" + fileName + ".docx";
+  const outputFile = settingsObject.outputDirectory + "/" + fileName + "." + settingsObject.outputFormat;
 
   let pandocBinaryPath = path
     .join(__dirname, "assets/bin/pandoc")
+    .replace("app.asar", "app.asar.unpacked");
+  
+  let scannableCiteFilterPath = path
+    .join(__dirname, "assets/bin/zotero.lua")
     .replace("app.asar", "app.asar.unpacked");
 
   const { spawn } = require("child_process");
   try {
     console.log(pandocBinaryPath);
-    const pandocCommand = [
+    const plainTextFlags = [
       "--citeproc",
       "--bibliography",
       settingsObject.bibliographyFile,
       "--csl",
       settingsObject.cslFile,
-      "--reference-doc",
-      settingsObject.docxFile,
+    ];
+    const liveCitationsFlags = [
+      `--lua-filter=${scannableCiteFilterPath}`,
+      `--metadata=zotero_csl_style:${settingsObject.liveCitationsModeCitationFormat}`,
+    ];
+    const pandocCommand = [
+      ...(settingsObject.mode === "liveCitations" ? liveCitationsFlags : []),
+      ...(settingsObject.mode === "plainText" ? plainTextFlags : []),
+      ...(settingsObject.outputFormat === "docx" ? ["--reference-doc", settingsObject.docxFile] : []),
       "--resource-path",
       path.dirname(fileName),
       "-f",
       `${settingsObject.markdownProcessor}${settingsObject.pandocExtensions}`,
       "-t",
-      "docx",
+      settingsObject.outputFormat,
       "-o",
       outputFile,
     ];
@@ -238,7 +261,7 @@ async function convert(filepath) {
           silent: true,
         });
         shell.showItemInFolder(
-          settingsObject.outputDirectory + "/" + fileName + ".docx"
+          settingsObject.outputDirectory + "/" + fileName + "." + settingsObject.outputFormat
         );
         setPreference("lastConvertedFile", filepath);
       } else {
@@ -289,6 +312,15 @@ async function externalConvert(filepath) {
             }
             console.log("Pandoc version is " + pandocVersion);
             const settingsObject = {
+              mode: settings.get("user.mode", settings.get("defaults.mode")),
+              outputFormat: settings.get(
+                "user.outputFormat",
+                settings.get("defaults.outputFormat")
+              ),
+              liveCitationsModeCitationFormat: settings.get(
+                "user.liveCitationsModeCitationFormat",
+                settings.get("defaults.liveCitationsModeCitationFormat")
+              ),
               outputDirectory: settings.get(
                 "user.outputDirectory",
                 settings.get("defaults.outputDirectory")
@@ -316,11 +348,14 @@ async function externalConvert(filepath) {
             };
             console.log(settingsObject);
             if (
-              settingsObject.outputDirectory === "" ||
-              settingsObject.bibliographyFile === "" ||
-              settingsObject.cslFile === "" ||
-              settingsObject.docxFile === "" ||
-              settingsObject.markdownProcessor === ""
+              settingsObject.mode === "plainText" &&
+              (
+                settingsObject.outputDirectory === "" ||
+                settingsObject.bibliographyFile === "" ||
+                settingsObject.cslFile === "" ||
+                settingsObject.docxFile === "" ||
+                settingsObject.markdownProcessor === ""
+              )
             ) {
               dialog.showMessageBox({
                 type: "warning",
@@ -331,27 +366,38 @@ async function externalConvert(filepath) {
             }
             var pandoc = require("node-pandoc");
             const fileName = path.basename(filepath, path.extname(filepath));
+            let scannableCiteFilterPath = path
+              .join(__dirname, "assets/bin/zotero.lua")
+              .replace("app.asar", "app.asar.unpacked");
+
             // const parentDirectory = path.dirname(filepath)
             const rawMarkdown =
               fs.readFileSync(filepath) + "\n\n# Bibliography";
             const outputFile =
-              settingsObject.outputDirectory + "/" + fileName + ".docx";
+              settingsObject.outputDirectory + "/" + fileName + "." + settingsObject.outputFormat;
 
             // This is where the magic happens, for a given definiton of 'magic'
-            const pandocCommand = [
+            const plainTextFlags = [
               "--citeproc",
               "--bibliography",
               settingsObject.bibliographyFile,
               "--csl",
               settingsObject.cslFile,
-              "--reference-doc",
-              settingsObject.docxFile,
+            ];
+            const liveCitationsFlags = [
+              `--lua-filter=${scannableCiteFilterPath}`,
+              `--metadata=zotero_csl_style:${settingsObject.liveCitationsModeCitationFormat}`,
+            ];
+            const pandocCommand = [
+              ...(settingsObject.mode === "liveCitations" ? liveCitationsFlags : []),
+              ...(settingsObject.mode === "plainText" ? plainTextFlags : []),
+              ...(settingsObject.outputFormat === "docx" ? ["--reference-doc", settingsObject.docxFile] : []),
               "--resource-path",
               path.dirname(fileName),
               "-f",
               `${settingsObject.markdownProcessor}${settingsObject.pandocExtensions}`,
               "-t",
-              "docx",
+              settingsObject.outputFormat,
               "-o",
               outputFile,
             ];
@@ -373,7 +419,7 @@ async function externalConvert(filepath) {
                     "Word document saved in " + settingsObject.outputDirectory,
                 });
                 shell.showItemInFolder(
-                  settingsObject.outputDirectory + "/" + fileName + ".docx"
+                  settingsObject.outputDirectory + "/" + fileName + "." + settingsObject.outputFormat
                 );
                 return console.log(result), result;
               }
@@ -428,6 +474,9 @@ mb.on("ready", function ready() {
     console.log("No settings are set!");
     settings.setAll({
       defaults: {
+        mode: "plainText",
+        outputFormat: "docx",
+        liveCitationsModeCitationFormat: "chicago-note-bibliography",
         outputDirectory: app.getPath("home"),
         bibliographyFile: "",
         cslFile: path.join(
@@ -452,7 +501,7 @@ mb.on("ready", function ready() {
     showIntroductionWindow();
   }
 
-  // Check if settings introduced in v0.2 and v0.3 are set
+  // Check if settings introduced in v0.2, v0.3, and v0.6 are set
   let autoUpdateCheckSet = settings.get("defaults.autoUpdateCheck");
   if (!autoUpdateCheckSet) {
     console.log("Auto update setting is missing!");
@@ -472,6 +521,26 @@ mb.on("ready", function ready() {
   if (!markdownProcessorCheck) {
     console.log("Optional Markdown processor setting is missing!");
     settings.set("defaults.markdownProcessor", "markdown");
+  }
+  let modeCheck = settings.get("defaults.mode");
+  if (!modeCheck) {
+    console.log("Mode setting is missing!");
+    settings.set("defaults.mode", "plainText");
+  }
+  let liveCitationsModeCitationFormatCheck = settings.get(
+    "defaults.liveCitationsModeCitationFormat"
+  );
+  if (!liveCitationsModeCitationFormatCheck) {
+    console.log("Live citations mode citation format setting is missing!");
+    settings.set(
+      "defaults.liveCitationsModeCitationFormat",
+      "chicago-note-bibliography"
+    );
+  }
+  let outputFormatCheck = settings.get("defaults.outputFormat");
+  if (!outputFormatCheck) {
+    console.log("Output format setting is missing!");
+    settings.set("defaults.outputFormat", "docx");
   }
 
   // Check for new release
@@ -552,6 +621,14 @@ app.on("will-finish-launching", () => {
       externalConvert(file);
     }
   });
+});
+
+ipcMain.on("change_mode", (event, mode) => {
+  setPreference("mode", mode);
+});
+
+ipcMain.on("choose_live_citations_csl", (event, csl) => {
+  setPreference("liveCitationsModeCitationFormat", csl);
 });
 
 ipcMain.on("select_file", (event, target) => {
@@ -689,6 +766,14 @@ ipcMain.on("choose_pandoc_extensions", (event, payload) => {
   }
 });
 
+ipcMain.on("choose_output_format", (event, payload) => {
+  if (payload.value == "") {
+    setPreference(payload.preference, "docx");
+  } else {
+    setPreference(payload.preference, payload.value);
+  }
+});
+
 ipcMain.on("show-preferences", () => {
   const preferencesWindow = window.createWindow({
     width: 636,
@@ -702,8 +787,18 @@ ipcMain.on("show-preferences", () => {
       enableRemoteModule: true,
     },
   });
+  // preferencesWindow.webContents.openDevTools({ mode: "detach" });
   const preferencesPath = path.resolve(__dirname, "preferences.html");
   const settingsObject = {
+    mode: settings.get("user.mode", settings.get("defaults.mode")),
+    outputFormat: settings.get(
+      "user.outputFormat",
+      settings.get("defaults.outputFormat")
+    ),
+    liveCitationsModeCitationFormat: settings.get(
+      "user.liveCitationsModeCitationFormat",
+      settings.get("defaults.liveCitationsModeCitationFormat")
+    ),
     outputDirectory: settings.get(
       "user.outputDirectory",
       settings.get("defaults.outputDirectory")
