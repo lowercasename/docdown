@@ -27,10 +27,13 @@
       <email>matthew.g.roth@yale.edu</email>
       <uri> https://orcid.org/0000-0001-7902-6331</uri>
     </contributor>
+    <contributor>
+      <name>Brenton M. Wiernik</name>
+    </contributor>
     <category citation-format="author-date"/>
     <category field="generic-base"/>
     <summary>The author-date variant of the Chicago style</summary>
-    <updated>2018-05-22T00:59:23+00:00</updated>
+    <updated>2022-12-12T04:02:09+00:00</updated>
     <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
   </info>
   <locale xml:lang="en">
@@ -42,9 +45,30 @@
       <term name="translator" form="short">trans.</term>
     </terms>
   </locale>
+  <locale xml:lang="pt-PT">
+    <terms>
+      <term name="accessed">acedido a</term>
+    </terms>
+  </locale>
+  <locale xml:lang="pt">
+    <terms>
+      <term name="editor" form="verb">editado por</term>
+      <term name="editor" form="verb-short">ed.</term>
+      <term name="container-author" form="verb">por</term>
+      <term name="translator" form="verb-short">traduzido por</term>
+      <term name="translator" form="short">trad.</term>
+      <term name="editortranslator" form="verb">editado e traduzido por</term>
+      <term name="and">e</term>
+      <term name="no date" form="long">s.d</term>
+      <term name="no date" form="short">s.d.</term>
+      <term name="in">em</term>
+      <term name="at">em</term>
+      <term name="by">por</term>
+    </terms>
+  </locale>
   <macro name="secondary-contributors">
     <choose>
-      <if type="chapter paper-conference" match="none">
+      <if type="chapter entry-dictionary entry-encyclopedia paper-conference" match="none">
         <group delimiter=". ">
           <names variable="editor translator" delimiter=". ">
             <label form="verb" text-case="capitalize-first" suffix=" "/>
@@ -60,7 +84,7 @@
   </macro>
   <macro name="container-contributors">
     <choose>
-      <if type="chapter paper-conference" match="any">
+      <if type="chapter entry-dictionary entry-encyclopedia paper-conference" match="any">
         <group prefix=", " delimiter=", ">
           <names variable="container-author" delimiter=", ">
             <label form="verb" suffix=" "/>
@@ -253,7 +277,7 @@
           </else>
         </choose>
       </if>
-      <else-if type="chapter paper-conference" match="any">
+      <else-if type="chapter entry-dictionary entry-encyclopedia paper-conference" match="any">
         <choose>
           <if is-numeric="edition">
             <group delimiter=" " prefix=", ">
@@ -320,7 +344,7 @@
           </group>
         </group>
       </else-if>
-      <else-if type="chapter paper-conference" match="any">
+      <else-if type="chapter entry-dictionary entry-encyclopedia paper-conference" match="any">
         <choose>
           <if variable="page" match="none">
             <group prefix=". ">
@@ -334,7 +358,7 @@
   </macro>
   <macro name="locators-chapter">
     <choose>
-      <if type="chapter paper-conference" match="any">
+      <if type="chapter entry-dictionary entry-encyclopedia paper-conference" match="any">
         <choose>
           <if variable="page">
             <group prefix=", ">
@@ -410,7 +434,7 @@
   </macro>
   <macro name="container-title">
     <choose>
-      <if type="chapter paper-conference" match="any">
+      <if type="chapter entry-dictionary entry-encyclopedia paper-conference" match="any">
         <text macro="container-prefix" suffix=" "/>
       </if>
     </choose>
@@ -509,14 +533,21 @@
     </choose>
   </macro>
   <macro name="event">
-    <group>
-      <text term="presented at" suffix=" "/>
+    <group delimiter=" ">
+      <choose>
+        <if variable="genre">
+          <text term="presented at"/>
+        </if>
+        <else>
+          <text term="presented at" text-case="capitalize-first"/>
+        </else>
+      </choose>
       <text variable="event"/>
     </group>
   </macro>
   <macro name="description">
     <choose>
-      <if type="interview">
+      <if variable="interviewer" type="interview" match="any">
         <group delimiter=". ">
           <text macro="interviewer"/>
           <text variable="medium" text-case="capitalize-first"/>
@@ -597,7 +628,7 @@
       </else>
     </choose>
   </macro>
-  <citation et-al-min="4" et-al-use-first="1" disambiguate-add-year-suffix="true" disambiguate-add-names="true" disambiguate-add-givenname="true" givenname-disambiguation-rule="primary-name" collapse="year">
+  <citation et-al-min="4" et-al-use-first="1" disambiguate-add-year-suffix="true" disambiguate-add-names="true" disambiguate-add-givenname="true" givenname-disambiguation-rule="primary-name" collapse="year" after-collapse-delimiter="; ">
     <layout prefix="(" suffix=")" delimiter="; ">
       <group delimiter=", ">
         <choose>
