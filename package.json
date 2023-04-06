@@ -34,7 +34,7 @@
     },
     "devDependencies": {
         "electron": "18.3.7",
-        "electron-builder": "^22.3.2"
+        "electron-builder": "^23.6.0"
     },
     "dependencies": {
         "auto-launch": "^5.0.5",
@@ -48,6 +48,6 @@
         "mime-types": "^2.1.26",
         "node-fetch": "^2.6.0",
         "node-pandoc": "^0.3.0",
-        "semver": "^5.7.1"
+        "semver": "^7.3.8"
     }
 }
