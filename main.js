@@ -276,7 +276,7 @@ async function convert(filepath) {
         console.log("Converted successfully.");
         showNotification({
           title: "Markdown converted sucessfully",
-          body: "Word document saved in " + settingsObject.outputDirectory,
+          body: "Exported document saved in " + getOutputDirectory(filepath),
         });
         shell.showItemInFolder(
           settingsObject.outputDirectory + "/" + fileName + "." + settingsObject.outputFormat
@@ -436,7 +436,7 @@ async function externalConvert(filepath) {
                 showNotification({
                   title: "Markdown converted sucessfully",
                   body:
-                    "Word document saved in " + getOutputDirectory(filepath),
+                    "Exported document saved in " + getOutputDirectory(filepath),
                 });
                 shell.showItemInFolder(outputFile);
                 return console.log(result), result;
