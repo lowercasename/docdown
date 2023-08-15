@@ -5,6 +5,7 @@
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="./vendor/css/photon.css" media="screen" charset="utf-8">
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
     <!-- <link rel="stylesheet" href="./index.css" media="screen" charset="utf-8"> -->
     <style>
     .window-content {
@@ -39,12 +40,9 @@
       </div>
     </div>
   </body>
-  <script>window.$ = window.jQuery = require('jquery');</script>
   <script>
-  const remote = require('electron').remote;
   $("#closeButton").click(function(){
-    var window = remote.getCurrentWindow();
-    window.hide();
+    window.close();
   })
   </script>
 </html>

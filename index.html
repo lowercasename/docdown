@@ -5,7 +5,7 @@
     <title>DocDown</title>
     <link rel="stylesheet" href="./vendor/css/photon.css" media="screen" charset="utf-8">
     <link rel="stylesheet" href="./index.css" media="screen" charset="utf-8">
-    <script>window.$ = window.jQuery = require('jquery');</script>
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
   </head>
   <body>
     <!-- <div class="header-arrow"></div> -->
@@ -50,7 +50,7 @@
             DocDown is a menu bar utility to convert files written in the lightweight Markdown syntax into academia-ready Word documents. Drop a file with the .txt, .md, or .markdown extension into DocDown, or export a file into it from an application like Ulysses, and it will export a Word file into your chosen directory.
           </p>
           <p>
-            DocDown requires the file conversion utility Pandoc to be installed on your system to function. You also need to select a Zotero bibliography file, a CSL file, and a reference .docx file in the preferences window. Confused? Visit the <a id="external_link" style="color:inherit" href="https://github.com/lowercasename/docdown">DocDown website</a> to get set up.
+            Before you can start using DocDown, you will need to set up some preferences, accessed via the <button disabled id="settings_button" class="btn btn-default"><span class="icon icon-cog" title="Preferences"></span></button> button. Need more help? Visit the <a id="external_link" style="color:inherit" href="https://github.com/lowercasename/docdown">DocDown website</a> to get set up.
           </p>
           <p>
             Happy converting!
@@ -59,65 +59,5 @@
       </div>
     </div>
   </body>
-  <script>
-  const { ipcRenderer, shell } = require('electron');
-
-  $("#quit_button").click(function(){
-    ipcRenderer.send('quit-app');
-  })
-  $("#settings_button").click(function(){
-    ipcRenderer.send('show-preferences');
-  });
-  $("#help_button").click(function(){
-    $("#drag-file-container").toggle();
-    $("#help_section").toggle();
-    $(this).toggleClass("active");
-  });
-  $("#external_link").click(function(e){
-    e.preventDefault();
-    shell.openExternal('https://github.com/lowercasename/docdown')
-  })
-  ipcRenderer.on('notify', (event, payload) => {
-    console.log(payload)
-    const notification = {
-        title: payload.title,
-        body: payload.body
-    }
-    const showNotification = new window.Notification(notification.title, notification);
-    // let notification = new Notification(payload.title, {
-    //   body: payload.body
-    // })
-    // console.log(showNotification)
-  })
-  $(document).ready(function() {
-      $("#convert_again_button").click(function(){
-        ipcRenderer.send('convert_again');
-      })
-
-      var holder = document.getElementById('drag-file')
-
-      holder.ondragover = (event) => {
-        event.preventDefault();
-        $("#drag-file").css("background-color","#ededed")
-        console.log("Dragging over!")
-      };
-
-      holder.ondragleave = (event) => {
-        event.preventDefault();
-        $("#drag-file").css("background-color","#fafafa")
-          console.log("Dragging left!")
-      };
-
-      holder.ondrop = (event) => {
-          event.preventDefault();
-          $("#drag-file").css("background-color","#fafafa")
-          console.log("Done did dropped!")
-          for (let f of event.dataTransfer.files) {
-            ipcRenderer.send('convert-file', {"path": f.path, "type": f.type});
-          }
-
-          return false;
-      };
-  });
-  </script>
+  <script src="./index-renderer.js"></script>
 </html>
