@@ -170,8 +170,18 @@
             </div>
             <div class="panel" id="fileLocationsPanel">
               <form>
-                <div class="form-group">
-                  <label>Folder to save exported files</label>
+                <div class="checkbox" style="margin-top: 0px">
+                  <label>
+                    <input type="checkbox" id="export_to_input_directory" /> Save exported file in same directory as input file
+                  </label>
+                </div>
+                <div
+                  class="form-group"
+                  style="margin-left: 20px"
+                >
+                  <label>
+                    Directory to save exported files
+                  </label>
                   <input
                     type="input"
                     id="output_directory_input"
@@ -559,6 +569,26 @@
       );
       $("#currentRelease").html(preferencesObject.currentRelease);
       $("#markdown_processor").val(preferencesObject.markdownProcessor);
+      $("#export_to_input_directory").prop(
+        "checked",
+        preferencesObject.exportToInputDirectory);
+      $("#output_directory_input").prop(
+        "disabled",
+        preferencesObject.exportToInputDirectory);
+      $("#output_directory_button").prop(
+        "disabled",
+        preferencesObject.exportToInputDirectory);
+      $("#export_to_input_directory").change(function () {
+        if (this.checked) {
+          ipcRenderer.send("set_export_to_input_directory", true);
+          $("#output_directory_input").prop("disabled", true);
+          $("#output_directory_button").prop("disabled", true);
+          return;
+        }
+        ipcRenderer.send("set_export_to_input_directory", false);
+        $("#output_directory_input").prop("disabled", false);
+        $("#output_directory_button").prop("disabled", false);
+      });
       $("#output_format").val(preferencesObject.outputFormat);
       if ($("#csl_radio_internal").is(":checked")) {
         console.log("CSL internal checked!");

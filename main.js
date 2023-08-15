@@ -32,9 +32,8 @@ const {
   Tray,
   dialog,
 } = require("electron");
-// require ('hazardous');
 const semver = require("semver");
-const menubar = require("menubar");
+const { menubar } = require("menubar");
 const path = require("path");
 const fs = require("fs");
 const mime = require("mime-types");
@@ -141,6 +140,22 @@ ipcMain.on("checkForNewRelease", (event) => {
     });
 });
 
+const getOutputDirectory = (inputFileName) => {
+  const exportToInputDirectory = settings.get(
+    "user.exportToInputDirectory",
+    settings.get("defaults.exportToInputDirectory")
+  );
+  const outputDirectory = settings.get(
+    "user.outputDirectory",
+    settings.get("defaults.outputDirectory")
+  );
+  if (exportToInputDirectory === true) {
+    return path.dirname(inputFileName);
+  } else {
+    return outputDirectory;
+  }
+};
+
 async function convert(filepath) {
   console.log("Starting conversion");
   // First, check if we should even be trying to convert this file
@@ -206,7 +221,7 @@ async function convert(filepath) {
   // Prepare the input file and set the output directory
   const fileName = path.basename(filepath, path.extname(filepath));
   const rawMarkdown = fs.readFileSync(filepath) + "\n\n# Bibliography";
-  const outputFile = settingsObject.outputDirectory + "/" + fileName + "." + settingsObject.outputFormat;
+  const outputFile = `${getOutputDirectory(filepath)}/${fileName}.${settingsObject.outputFormat}`;
 
   let pandocBinaryPath = path
     .join(__dirname, "assets/bin/pandoc")
@@ -266,9 +281,9 @@ async function convert(filepath) {
         setPreference("lastConvertedFile", filepath);
       } else {
         console.log("Error in conversion.");
-        nativeNotify({
+        dialog.showMessageBox({
           title: "Error converting Markdown",
-          body: `Pandoc was unable to convert with the error ${pandocErrorCodes[code]}.`,
+          message: `Pandoc was unable to convert with the error ${pandocErrorCodes[code]}.`,
           silent: true,
         });
       }
@@ -374,7 +389,9 @@ async function externalConvert(filepath) {
             const rawMarkdown =
               fs.readFileSync(filepath) + "\n\n# Bibliography";
             const outputFile =
-              settingsObject.outputDirectory + "/" + fileName + "." + settingsObject.outputFormat;
+              `${getOutputDirectory(filepath)}/${fileName}.${settingsObject.outputFormat}`;
+
+            console.log(outputFile);
 
             // This is where the magic happens, for a given definiton of 'magic'
             const plainTextFlags = [
@@ -407,7 +424,7 @@ async function externalConvert(filepath) {
                 console.error("Pandoc error: ", err);
                 dialog.showMessageBox({
                   title: "Error converting Markdown",
-                  body: `Pandoc was unable to convert with the error ${err}.`,
+                  message: `Pandoc was unable to convert with the error: ${err.toString()}.`,
                   silent: true,
                 });
                 return false;
@@ -416,11 +433,9 @@ async function externalConvert(filepath) {
                 nativeNotify({
                   title: "Markdown converted sucessfully",
                   body:
-                    "Word document saved in " + settingsObject.outputDirectory,
+                    "Word document saved in " + getOutputDirectory(filepath),
                 });
-                shell.showItemInFolder(
-                  settingsObject.outputDirectory + "/" + fileName + "." + settingsObject.outputFormat
-                );
+                shell.showItemInFolder(outputFile);
                 return console.log(result), result;
               }
             };
@@ -449,7 +464,8 @@ const assetsDirectory = path
   .join(__dirname, "assets")
   .replace("app.asar", "app.asar.unpacked");
 
-var mb = menubar({
+
+const mb = menubar({
   icon: path.join(assetsDirectory, "docdown_iconTemplate.png"),
   width: 300,
   height: 400,
@@ -457,14 +473,16 @@ var mb = menubar({
   hasShadow: true,
   resizable: false,
   preloadWindow: true,
-  webPreferences: {
-    nodeIntegration: true,
-    contextIsolation: false,
-    enableRemoteModule: true,
+  browserWindow: {
+    webPreferences: {
+      preload: path.join(app.getAppPath(), "preload.js"),
+    },
   },
 });
 
 mb.on("ready", function ready() {
+  console.log("App is ready!");
+
   // Add /usr/local/bin and /usr/local/sbin to $PATH because they aren't in $PATH if the application is started from Finder
   process.env.PATH += ":/usr/local/bin:/usr/local/sbin";
 
@@ -477,6 +495,7 @@ mb.on("ready", function ready() {
         mode: "plainText",
         outputFormat: "docx",
         liveCitationsModeCitationFormat: "chicago-note-bibliography",
+        exportToInputDirectory: false,
         outputDirectory: app.getPath("home"),
         bibliographyFile: "",
         cslFile: path.join(
@@ -501,7 +520,7 @@ mb.on("ready", function ready() {
     showIntroductionWindow();
   }
 
-  // Check if settings introduced in v0.2, v0.3, and v0.6 are set
+  // Check if settings introduced in v0.2, v0.3, 0.6, and 0.7 are set
   let autoUpdateCheckSet = settings.get("defaults.autoUpdateCheck");
   if (!autoUpdateCheckSet) {
     console.log("Auto update setting is missing!");
@@ -541,6 +560,13 @@ mb.on("ready", function ready() {
   if (!outputFormatCheck) {
     console.log("Output format setting is missing!");
     settings.set("defaults.outputFormat", "docx");
+  }
+  let exportToInputDirectoryCheck = settings.get(
+    "defaults.exportToInputDirectory"
+  );
+  if (!exportToInputDirectoryCheck) {
+    console.log("Export to input directory setting is missing!");
+    settings.set("defaults.exportToInputDirectory", false);
   }
 
   // Check for new release
@@ -631,8 +657,12 @@ ipcMain.on("choose_live_citations_csl", (event, csl) => {
   setPreference("liveCitationsModeCitationFormat", csl);
 });
 
+ipcMain.on("set_export_to_input_directory", (event, value) => {
+  setPreference("exportToInputDirectory", value);
+});
+
 ipcMain.on("select_file", (event, target) => {
-  console.log("DOING AN SELECT");
+  let name, extension, element, property;
   if (target == "outputDirectory") {
     extension = [""];
     element = "#output_directory_input";
@@ -799,6 +829,10 @@ ipcMain.on("show-preferences", () => {
       "user.liveCitationsModeCitationFormat",
       settings.get("defaults.liveCitationsModeCitationFormat")
     ),
+    exportToInputDirectory: settings.get(
+      "user.exportToInputDirectory",
+      settings.get("defaults.exportToInputDirectory")
+    ),
     outputDirectory: settings.get(
       "user.outputDirectory",
       settings.get("defaults.outputDirectory")
@@ -883,6 +917,11 @@ ipcMain.on("convert-file", (event, file) => {
     externalConvert(file.path);
   }
 });
+
+ipcMain.on('open-external-link', (event, payload) => {
+  console.log(payload);
+  shell.openExternal(payload);
+})  
 
 function setPreference(preference, value) {
   preference = "user." + preference;
