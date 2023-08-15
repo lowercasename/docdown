@@ -476,6 +476,8 @@ const mb = menubar({
   hasShadow: true,
   resizable: false,
   preloadWindow: true,
+  showDockIcon: false,
+  showOnAllWorkspaces: false,
   browserWindow: {
     webPreferences: {
       preload: path.join(app.getAppPath(), "preload.js"),
