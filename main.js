@@ -27,10 +27,9 @@
 const {
   app,
   shell,
-  BrowserWindow,
   ipcMain,
-  Tray,
   dialog,
+  Notification,
 } = require("electron");
 const semver = require("semver");
 const { menubar } = require("menubar");
@@ -41,7 +40,6 @@ const window = require("electron-window");
 const settings = require("electron-settings");
 const AutoLaunch = require("auto-launch");
 const commandExists = require("command-exists");
-const notify = require("electron-main-notification");
 const fetch = require("node-fetch");
 
 const pandocErrorCodes = {
@@ -156,13 +154,19 @@ const getOutputDirectory = (inputFileName) => {
   }
 };
 
+const showNotification = (payload) => {
+  new Notification({
+    title: payload.title,
+    body: payload.body,
+  }).show();
+};
+
 async function convert(filepath) {
   console.log("Starting conversion");
   // First, check if we should even be trying to convert this file
   const fileType = mime.lookup(filepath);
   if (!(fileType == "text/markdown") && !(fileType == "text/plain")) {
-    // notify('Markdown not converted', { body: path.basename(filepath) + " is not a Markdown file." })
-    nativeNotify({
+    showNotification({
       title: "Markdown not converted",
       body: path.basename(filepath) + " is not a Markdown file.",
     });
@@ -270,10 +274,9 @@ async function convert(filepath) {
       console.log(`child process exited with code ${code}`);
       if (code === 0) {
         console.log("Converted successfully.");
-        nativeNotify({
+        showNotification({
           title: "Markdown converted sucessfully",
           body: "Word document saved in " + settingsObject.outputDirectory,
-          silent: true,
         });
         shell.showItemInFolder(
           settingsObject.outputDirectory + "/" + fileName + "." + settingsObject.outputFormat
@@ -430,7 +433,7 @@ async function externalConvert(filepath) {
                 return false;
               } else {
                 console.log("Completed!");
-                nativeNotify({
+                showNotification({
                   title: "Markdown converted sucessfully",
                   body:
                     "Word document saved in " + getOutputDirectory(filepath),
@@ -452,7 +455,7 @@ async function externalConvert(filepath) {
       }
     });
   } else {
-    nativeNotify({
+    showNotification({
       title: "Markdown not converted",
       body: path.basename(filepath) + " is not a Markdown file.",
     });
@@ -623,9 +626,6 @@ mb.on("ready", function ready() {
   mb.tray.on("drag-end", function (event) {
     mb.hideWindow();
   });
-  nativeNotify = function (payload) {
-    mb.window.webContents.send("notify", payload);
-  };
 });
 
 // Quit the app when the window is closed
