@@ -682,10 +682,10 @@ electron-window@^0.8.1:
   dependencies:
     is-electron-renderer "^2.0.0"
 
-electron@^22.3.18:
-  version "22.3.18"
-  resolved "https://registry.npmjs.org/electron/-/electron-22.3.18.tgz"
-  integrity sha512-JgjB966ghTBszAX/GgVgDY/2CktWCjTZWGJI0WISRHDudBZ8/WPkI/hIjsMiLQLe0wSTk6S+WHOYbIqyw0I/sg==
+electron@^22.3.25:
+  version "22.3.25"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-22.3.25.tgz#a9a70b63a6712c658cd7fab343129b2a78450f80"
+  integrity sha512-AjrP7bebMs/IPsgmyowptbA7jycTkrJC7jLZTb5JoH30PkBC6pZx/7XQ0aDok82SsmSiF4UJDOg+HoLrEBiqmg==
   dependencies:
     "@electron/get" "^2.0.0"
     "@types/node" "^16.11.26"
